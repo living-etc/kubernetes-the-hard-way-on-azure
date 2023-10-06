@@ -13,13 +13,61 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   kind: 'Storage'
 }
 
-resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
-  name: projectNameAbbrv
+resource internal 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
+  name: '${projectNameAbbrv}-internal'
   location: location
   properties: {
     securityRules: [
       {
-        name: 'default-allow-22'
+        name: 'allow-all-internal-tcp'
+        properties: {
+          priority: 1000
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '*'
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.240.0.0/24'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'allow-all-internal-udp'
+        properties: {
+          priority: 1100
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '*'
+          protocol: 'Udp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.240.0.0/24'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'allow-all-internal-icmp'
+        properties: {
+          priority: 1200
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '*'
+          protocol: 'Icmp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.240.0.0/24'
+          destinationAddressPrefix: '*'
+        }
+      }
+    ]
+  }
+}
+
+resource external 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
+  name: '${projectNameAbbrv}-external'
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'allow-ssh-external-tcp'
         properties: {
           priority: 1000
           access: 'Allow'
@@ -27,12 +75,43 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2023-04-0
           destinationPortRange: '22'
           protocol: 'Tcp'
           sourcePortRange: '*'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: '0.0.0.0/0'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'allow-udp-external-tcp'
+        properties: {
+          priority: 1100
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '6443'
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '0.0.0.0/0'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'allow-all-internal-icmp'
+        properties: {
+          priority: 1200
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '*'
+          protocol: 'Icmp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '0.0.0.0/0'
           destinationAddressPrefix: '*'
         }
       }
     ]
   }
+}
+
+resource symbolicname 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
+  name: projectNameAbbrv
+  location: location
 }
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
@@ -50,7 +129,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
         properties: {
           addressPrefix: '10.240.0.0/24'
           networkSecurityGroup: {
-            id: networkSecurityGroup.id
+            id: internal.id
           }
         }
       }
@@ -66,25 +145,33 @@ resource ansible 'Microsoft.Compute/sshPublicKeys@2023-03-01' = {
   }
 }
 
-var controllerConfig = [
-  {
-    privateIp: '10.240.0.10'
-  }
-  {
-    privateIp: '10.240.0.11'
-  }
-  {
-    privateIp: '10.240.0.12'
-  }
-]
-
-module controller './modules/vm/main.bicep' = [for (config, index) in controllerConfig: {
+module controller './modules/vm/main.bicep' = [for index in range(0, 3): {
   name: 'controller-${index}'
   params: {
     instanceName: 'controller-${index}'
     publicKey: ansible.properties.publicKey
     projectNameAbbrv: '${projectNameAbbrv}-${index}'
     location: location
-    privateIp: config.privateIp
+    privateIp: '10.240.0.1${index}'
+    tags: {
+      Porject: 'kubernetes-the-hard-way'
+      Role: 'controller'
+    }
+  }
+}]
+
+module worker './modules/vm/main.bicep' = [for index in range(0, 3): {
+  name: 'worker-${index}'
+  params: {
+    instanceName: 'worker-${index}'
+    publicKey: ansible.properties.publicKey
+    projectNameAbbrv: '${projectNameAbbrv}-${index}'
+    location: location
+    privateIp: '10.240.0.2${index}'
+    customData: '{"pod-cidr":"10.200.${index}.0/24"}'
+    tags: {
+      Porject: 'kubernetes-the-hard-way'
+      Role: 'worker'
+    }
   }
 }]

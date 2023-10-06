@@ -3,6 +3,8 @@ param projectNameAbbrv string
 param location string
 param privateIp string
 param instanceName string
+param tags object
+param customData string = ''
 
 resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: projectNameAbbrv
@@ -29,6 +31,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: instanceName
   location: location
+  tags: tags
 
   properties: {
     storageProfile: {
@@ -37,6 +40,10 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         offer: '0001-com-ubuntu-server-jammy'
         sku: '22_04-lts-gen2'
         version: 'latest'
+      }
+      osDisk: {
+        createOption: 'FromImage'
+        diskSizeGB: 200
       }
     }
 
@@ -56,6 +63,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       computerName: 'Node'
       adminUsername: 'ubuntu'
       adminPassword: 'ubuntu'
+      customData: customData
 
       linuxConfiguration: {
         disablePasswordAuthentication: true
