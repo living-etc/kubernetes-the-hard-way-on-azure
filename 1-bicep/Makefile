@@ -23,3 +23,6 @@ what-if:
 clean:
 	az group delete \
 		--resource-group Kubernetes-The-Hard-Way
+
+ips:
+	./scripts/get-ips.sh
