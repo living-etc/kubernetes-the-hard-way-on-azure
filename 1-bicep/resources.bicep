@@ -27,7 +27,7 @@ resource ansible 'Microsoft.Compute/sshPublicKeys@2023-03-01' = {
 }
 
 module network './modules/vnet/main.bicep' = {
-  name: projectNameAbbrv
+  name: '${deployment().name}-network'
   params: {
     location: location
     networkName: projectNameAbbrv
@@ -37,7 +37,7 @@ module network './modules/vnet/main.bicep' = {
 }
 
 module controller './modules/vm/main.bicep' = [for index in range(0, 3): {
-  name: 'controller-${index}'
+  name: '${deployment().name}-controller-${index}'
   params: {
     instanceName: 'controller-${index}'
     publicKey: ansible.properties.publicKey
@@ -52,7 +52,7 @@ module controller './modules/vm/main.bicep' = [for index in range(0, 3): {
 }]
 
 module worker './modules/vm/main.bicep' = [for index in range(0, 3): {
-  name: 'worker-${index}'
+  name: '${deployment().name}-worker-${index}'
   params: {
     instanceName: '${projectNameAbbrv}-worker-${index}'
     publicKey: ansible.properties.publicKey
