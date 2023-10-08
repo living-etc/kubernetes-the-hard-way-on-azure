@@ -37,7 +37,7 @@ module network './modules/vnet/main.bicep' = {
   }
 }
 
-module controller './modules/vm/main.bicep' = [for index in range(0, 3): {
+module controller './modules/vm/main.bicep' = [for index in range(1, 3): {
   name: '${deployment().name}-controller-${index}'
   params: {
     instanceName: 'controller-${index}'
@@ -46,16 +46,16 @@ module controller './modules/vm/main.bicep' = [for index in range(0, 3): {
     privateIp: '10.240.0.1${index}'
     subnet: network.outputs.subnetId
     tags: {
-      Porject: 'kubernetes-the-hard-way'
+      Project: 'kubernetes-the-hard-way'
       Role: 'controller'
     }
   }
 }]
 
-module worker './modules/vm/main.bicep' = [for index in range(0, 3): {
+module worker './modules/vm/main.bicep' = [for index in range(1, 3): {
   name: '${deployment().name}-worker-${index}'
   params: {
-    instanceName: '${projectNameAbbrv}-worker-${index}'
+    instanceName: 'worker-${index}'
     publicKey: ansible.properties.publicKey
     location: location
     privateIp: '10.240.0.2${index}'
