@@ -3,7 +3,7 @@ param location string
 param privateIp string
 param instanceName string
 param tags object
-param customData string = ''
+param customData string = '{}'
 param subnet string
 
 resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
