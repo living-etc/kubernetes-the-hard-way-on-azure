@@ -13,7 +13,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   properties: {
     ipConfigurations: [
       {
-        name: 'ipConfig1'
+        name: 'primary'
         properties: {
           privateIPAllocationMethod: 'Static'
           subnet: {
@@ -21,10 +21,22 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
           }
           privateIPAddress: privateIp
           privateIPAddressVersion: 'IPv4'
+          publicIPAddress: {
+            id: publicIP.id
+          }
         }
       }
     ]
     disableTcpStateTracking: false
+  }
+}
+
+resource publicIP 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: instanceName
+  location: location
+  properties: {
+    publicIPAllocationMethod: 'Dynamic'
+    publicIPAddressVersion: 'IPv4'
   }
 }
 
@@ -78,17 +90,5 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
         }
       }
     }
-  }
-}
-
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
-  name: instanceName
-  location: location
-  sku: {
-    name: 'Basic'
-    tier: 'Regional'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Dynamic'
   }
 }
