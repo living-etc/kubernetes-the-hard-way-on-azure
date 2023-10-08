@@ -1,13 +1,13 @@
 param publicKey string
-param projectNameAbbrv string
 param location string
 param privateIp string
 param instanceName string
 param tags object
 param customData string = ''
+param subnet string
 
 resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
-  name: projectNameAbbrv
+  name: instanceName
   location: location
 
   properties: {
@@ -17,7 +17,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
         properties: {
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'kthw', 'Subnet')
+            id: subnet
           }
           privateIPAddress: privateIp
           privateIPAddressVersion: 'IPv4'
@@ -43,7 +43,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       }
       osDisk: {
         createOption: 'FromImage'
-        diskSizeGB: 200
+        diskSizeGB: 32
       }
     }
 
@@ -63,7 +63,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       computerName: 'Node'
       adminUsername: 'ubuntu'
       adminPassword: 'ubuntu'
-      customData: customData
+      customData: base64(customData)
 
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -82,7 +82,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
 }
 
 resource publicIp 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
-  name: projectNameAbbrv
+  name: instanceName
   location: location
   sku: {
     name: 'Basic'
@@ -90,8 +90,5 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
-    dnsSettings: {
-      domainNameLabel: toLower('${projectNameAbbrv}-${uniqueString(resourceGroup().id, projectNameAbbrv)}')
-    }
   }
 }
