@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
 	"os/exec"
 	"strconv"
 	"testing"
@@ -12,6 +13,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v2"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
@@ -35,8 +37,30 @@ func (vm VM) reachableOnPort(port int) (bool, error) {
 
 	_, err := cmd.Output()
 	if err != nil {
-		return false, errors.New("Encountered an error running 'nc'")
+		return false, errors.New("non-zero exit code from nc: " + err.Error())
 	}
+
+	return true, nil
+}
+
+func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
+	key, err := os.ReadFile("../0-keys/id_rsa")
+	check(err, "Unable to read private key file")
+
+	signer, err := ssh.ParsePrivateKey(key)
+	check(err, "Unable to parse private key file")
+
+	config := &ssh.ClientConfig{
+		User: "ubuntu",
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(signer),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+
+	client, err := ssh.Dial("tcp", vm.publicIPAddress+":22", config)
+	check(err, "Unable to connect to "+vm.publicIPAddress)
+	defer client.Close()
 
 	return true, nil
 }
@@ -135,6 +159,14 @@ func TestVMs(t *testing.T) {
 		t.Run(tt.vmName+" reachable on port 22", func(t *testing.T) {
 			if !reachable {
 				t.Errorf("%v: not reachable on port 22", tt.vmName)
+			}
+		})
+
+		connectable, err := vm.connectableOverSSH("../0-keys/id_rsa.pub")
+		check(err, "Unable to check SSH connectivity")
+		t.Run(tt.vmName+" connectable over SSH", func(t *testing.T) {
+			if !connectable {
+				t.Errorf("%v: not connectable over ssh", tt.vmName)
 			}
 		})
 	}
