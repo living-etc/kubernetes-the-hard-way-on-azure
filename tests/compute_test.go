@@ -115,7 +115,7 @@ func vmFromName(name string) (VM, error) {
 	return result, nil
 }
 
-func TestVMs(t *testing.T) {
+func TestCompute(t *testing.T) {
 	tests := []struct {
 		vmName    string
 		privateIP string

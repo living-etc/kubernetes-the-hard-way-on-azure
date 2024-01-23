@@ -26,3 +26,6 @@ compute/what-if:
 compute/clean:
 	az group delete \
 		--resource-group Kubernetes-The-Hard-Way
+
+compute/test:
+	cd tests; go test
