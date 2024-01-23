@@ -17,6 +17,10 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 resource loadBalancerIpAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: projectNameAbbrv
   location: location
+  sku: {
+    name: 'Basic'
+    tier: 'Regional'
+  }
 }
 
 resource ansible 'Microsoft.Compute/sshPublicKeys@2023-03-01' = {

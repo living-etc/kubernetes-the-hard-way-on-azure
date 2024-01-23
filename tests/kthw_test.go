@@ -24,6 +24,7 @@ const (
 type VM struct {
 	privateIPAddress string
 	publicIPAddress  string
+	dnsName          string
 }
 
 func check(err error, message string) {
@@ -44,7 +45,7 @@ func (vm VM) reachableOnPort(port int) (bool, error) {
 }
 
 func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
-	key, err := os.ReadFile("../0-keys/id_rsa")
+	key, err := os.ReadFile("../keys/id_rsa")
 	check(err, "Unable to read private key file")
 
 	signer, err := ssh.ParsePrivateKey(key)
@@ -107,6 +108,7 @@ func vmFromName(name string) (VM, error) {
 			check(err, "Could not get public IP address")
 
 			result.publicIPAddress = *publicIP.PublicIPAddress.Properties.IPAddress
+			result.dnsName = *publicIP.PublicIPAddress.Properties.DNSSettings.Fqdn
 		}
 	}
 
@@ -167,6 +169,14 @@ func TestVMs(t *testing.T) {
 		t.Run(tt.vmName+" connectable over SSH", func(t *testing.T) {
 			if !connectable {
 				t.Errorf("%v: not connectable over ssh", tt.vmName)
+			}
+		})
+
+		t.Run(tt.vmName+" correct DNS name", func(t *testing.T) {
+			want := tt.vmName + "-kthw-cw.uksouth.cloudapp.azure.com"
+			got := vm.dnsName
+			if got != want {
+				t.Errorf("want %v, got %v", want, got)
 			}
 		})
 	}

@@ -37,6 +37,9 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     publicIPAddressVersion: 'IPv4'
+    dnsSettings: {
+      domainNameLabel: '${instanceName}-kthw-cw'
+    }
   }
 }
 
