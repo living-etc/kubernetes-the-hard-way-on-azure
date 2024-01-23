@@ -1,10 +1,10 @@
-include tasks/Makefile.bicep
+include tasks/Makefile.compute
 include tasks/Makefile.tls
-include tasks/Makefile.provision
+include tasks/Makefile.config
 
 default: all
-all: bicep/all tls/all provision/all
-clean: bicep/clean tls/clean
+all: compute/all tls/all config/all
+clean: compute/clean tls/clean
 
 ips:
 	./scripts/get-ips.sh

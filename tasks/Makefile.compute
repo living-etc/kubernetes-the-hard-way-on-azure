@@ -1,0 +1,28 @@
+TEMPLATE_PATH=bicep
+KEYS_PATH=keys
+
+compute/all: compute/resource-group compute/resources
+
+compute/resources:
+	az deployment group create \
+		--name KubernetesTheHardWay-$(shell date +"%Y-%m-%d_%H-%M-%S") \
+		--template-file ${TEMPLATE_PATH}/resources.bicep \
+		--resource-group Kubernetes-The-Hard-Way \
+		--parameters "sshPublicKey=$(shell cat ${KEYS_PATH}/id_rsa.pub)"
+
+compute/resource-group:
+	az deployment sub create \
+		--name KubernetesTheHardWay-$(shell date +"%Y-%m-%d_%H-%M-%S") \
+		--template-file ${TEMPLATE_PATH}/resource-group.bicep \
+		--location uksouth
+
+compute/what-if:
+	az deployment group what-if \
+		--name KubernetesTheHardWay-$(shell date +"%Y-%m-%d_%H-%M-%S") \
+		--template-file ${TEMPLATE_PATH}/resources.bicep \
+		--resource-group Kubernetes-The-Hard-Way \
+		--parameters "sshPublicKey=$(shell cat ${KEYS_PATH}/id_rsa.pub)"
+
+compute/clean:
+	az group delete \
+		--resource-group Kubernetes-The-Hard-Way
