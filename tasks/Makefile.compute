@@ -28,4 +28,4 @@ compute/clean:
 		--resource-group Kubernetes-The-Hard-Way
 
 compute/test:
-	cd tests; go test
+	cd tests; go test -v --run TestCompute

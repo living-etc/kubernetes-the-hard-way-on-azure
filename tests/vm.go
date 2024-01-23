@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strconv"
@@ -20,6 +22,12 @@ type VM struct {
 	dnsName          string
 }
 
+func check(err error, message string) {
+	if err != nil {
+		log.Fatalf("%v: %v", message, err)
+	}
+}
+
 func (vm VM) reachableOnPort(port int) (bool, error) {
 	cmd := exec.Command("nc", vm.publicIPAddress, strconv.Itoa(port), "-w 1")
 
@@ -31,7 +39,7 @@ func (vm VM) reachableOnPort(port int) (bool, error) {
 	return true, nil
 }
 
-func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
+func (vm VM) newSSHSession() (*ssh.Client, error) {
 	key, err := os.ReadFile("../keys/id_rsa")
 	check(err, "Unable to read private key file")
 
@@ -47,10 +55,34 @@ func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
 	}
 
 	client, err := ssh.Dial("tcp", vm.publicIPAddress+":22", config)
+
+	return client, err
+}
+
+func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
+	client, err := vm.newSSHSession()
 	check(err, "Unable to connect to "+vm.publicIPAddress)
 	defer client.Close()
 
 	return true, nil
+}
+
+func (vm VM) hasFile(filename string) bool {
+	client, err := vm.newSSHSession()
+	check(err, "Unable to connect to "+vm.publicIPAddress)
+
+	session, err := client.NewSession()
+	check(err, "Unable to open SSH session")
+	defer session.Close()
+
+	cmd := fmt.Sprintf("test -f %v", filename)
+	err = session.Run(cmd)
+
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 func vmFromName(name string) (VM, error) {

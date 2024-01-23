@@ -1,0 +1,17 @@
+---
+# tasks file for worker
+- name: Copy PKI key
+  ansible.builtin.copy:
+    src: "../../../../../tls/{{ inventory_hostname }}-key.pem"
+    dest: "/home/ubuntu/{{ inventory_hostname }}-key.pem"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: Copy PKI certificate
+  ansible.builtin.copy:
+    src: "../../../../../tls/{{ inventory_hostname }}.pem"
+    dest: "/home/ubuntu/{{ inventory_hostname }}.pem"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'

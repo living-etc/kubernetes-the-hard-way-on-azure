@@ -5,7 +5,27 @@ const (
 	resourceGroupName = "kubernetes-the-hard-way"
 )
 
-var tests = []struct {
+var all_tests = append(worker_tests, controller_tests...)
+
+var worker_tests = []struct {
+	vmName    string
+	privateIP string
+}{
+	{
+		vmName:    "worker-1",
+		privateIP: "10.240.0.21",
+	},
+	{
+		vmName:    "worker-2",
+		privateIP: "10.240.0.22",
+	},
+	{
+		vmName:    "worker-3",
+		privateIP: "10.240.0.23",
+	},
+}
+
+var controller_tests = []struct {
 	vmName    string
 	privateIP string
 }{
@@ -20,17 +40,5 @@ var tests = []struct {
 	{
 		vmName:    "controller-3",
 		privateIP: "10.240.0.13",
-	},
-	{
-		vmName:    "worker-1",
-		privateIP: "10.240.0.21",
-	},
-	{
-		vmName:    "worker-2",
-		privateIP: "10.240.0.22",
-	},
-	{
-		vmName:    "worker-3",
-		privateIP: "10.240.0.23",
 	},
 }

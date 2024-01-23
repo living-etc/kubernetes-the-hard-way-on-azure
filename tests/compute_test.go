@@ -1,18 +1,11 @@
 package main
 
 import (
-	"log"
 	"testing"
 )
 
-func check(err error, message string) {
-	if err != nil {
-		log.Fatalf("%v: %v", message, err)
-	}
-}
-
 func TestCompute(t *testing.T) {
-	for _, tt := range tests {
+	for _, tt := range all_tests {
 		vm, err := vmFromName(tt.vmName)
 		check(err, "Unable to get VM from name")
 

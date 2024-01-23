@@ -1,0 +1,5 @@
+---
+- hosts: controllers
+  roles:
+    - common
+    - controller

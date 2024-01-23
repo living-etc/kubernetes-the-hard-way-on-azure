@@ -1,0 +1,8 @@
+---
+- name: Copy ca.pem
+  ansible.builtin.copy:
+    src: ../../../../tls/ca.pem
+    dest: /home/ubuntu/ca.pem
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'

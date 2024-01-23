@@ -1,0 +1,14 @@
+---
+# tasks file for controller
+- name: Copy PKI keys and certificates
+  ansible.builtin.copy:
+    src: "../../../../../tls/{{ item }}"
+    dest: "/home/ubuntu/{{ item }}"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  loop:
+    - kubernetes-key.pem
+    - kubernetes.pem
+    - service-account-key.pem
+    - service-account.pem
