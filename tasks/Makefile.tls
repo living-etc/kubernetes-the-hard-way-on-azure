@@ -1,0 +1,56 @@
+TLS_PATH=tls
+SCRIPTS_PATH=scripts
+
+tls/all: tls/ca tls/admin tls/workers tls/kube-controller-manager tls/kube-proxy tls/kube-scheduler tls/kubernetes tls/service-account
+
+tls/ca:
+	cfssl gencert -initca ${TLS_PATH}/ca-csr.json | cfssljson -bare ${TLS_PATH}/ca
+
+tls/admin:
+	cfssl gencert \
+	-ca=${TLS_PATH}/ca.pem \
+	-ca-key=${TLS_PATH}/ca-key.pem \
+	-config=${TLS_PATH}/ca-config.json \
+	-profile=kubernetes \
+	${TLS_PATH}/admin-csr.json | cfssljson -bare ${TLS_PATH}/admin
+
+tls/workers:
+	./${SCRIPTS_PATH}/generate-worker-certs.sh
+
+tls/kube-controller-manager:
+		cfssl gencert \
+		-ca=${TLS_PATH}/ca.pem \
+		-ca-key=${TLS_PATH}/ca-key.pem \
+		-config=${TLS_PATH}/ca-config.json \
+		-profile=kubernetes \
+  	${TLS_PATH}/kube-controller-manager-csr.json | cfssljson -bare ${TLS_PATH}/kube-controller-manager
+
+tls/kube-proxy:
+		cfssl gencert \
+		-ca=${TLS_PATH}/ca.pem \
+		-ca-key=${TLS_PATH}/ca-key.pem \
+		-config=${TLS_PATH}/ca-config.json \
+		-profile=kubernetes \
+  	${TLS_PATH}/kube-proxy-csr.json | cfssljson -bare ${TLS_PATH}/kube-proxy
+
+tls/kube-scheduler:
+		cfssl gencert \
+		-ca=${TLS_PATH}/ca.pem \
+		-ca-key=${TLS_PATH}/ca-key.pem \
+		-config=${TLS_PATH}/ca-config.json \
+		-profile=kubernetes \
+  	${TLS_PATH}/kube-scheduler-csr.json | cfssljson -bare ${TLS_PATH}/kube-scheduler
+
+tls/kubernetes:
+	./${SCRIPTS_PATH}/generate-kubernetes-certs.sh
+
+tls/service-account:
+	cfssl gencert \
+  	-ca=${TLS_PATH}/ca.pem \
+  	-ca-key=${TLS_PATH}/ca-key.pem \
+  	-config=${TLS_PATH}/ca-config.json \
+  	-profile=kubernetes \
+  	${TLS_PATH}/service-account-csr.json | cfssljson -bare ${TLS_PATH}/service-account
+
+tls/clean:
+	rm tls/*.pem
