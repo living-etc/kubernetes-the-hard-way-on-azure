@@ -4,6 +4,7 @@ param subnetAddressPrefixes string
 param location string
 
 output subnetId string = virtualNetwork.properties.subnets[0].id
+output id string = virtualNetwork.id
 
 var securityRules = [
   {

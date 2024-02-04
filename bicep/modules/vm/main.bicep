@@ -5,6 +5,8 @@ param instanceName string
 param tags object
 param customData string = '{}'
 param subnet string
+param loadBalancerBackendPool string = ''
+param loadBalancer string = ''
 
 resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: instanceName
@@ -25,6 +27,11 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
             id: publicIP.id
           }
         }
+        loadBalancerBackendAddressPools: [
+        {
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer, loadBalancerBackendPool) 
+          }
+        ]
       }
     ]
     disableTcpStateTracking: false
@@ -35,11 +42,15 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: instanceName
   location: location
   properties: {
-    publicIPAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Static'
     publicIPAddressVersion: 'IPv4'
     dnsSettings: {
       domainNameLabel: '${instanceName}-kthw-cw'
     }
+  }
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
   }
 }
 

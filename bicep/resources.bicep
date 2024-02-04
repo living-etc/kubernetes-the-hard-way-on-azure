@@ -4,6 +4,10 @@ param location string = resourceGroup().location
 param sshPublicKey string
 
 var projectNameAbbrv = 'kthw'
+var lbName = 'k8sControllersLB'
+var lbFrontEndName = projectNameAbbrv
+var lbBackendPoolName = 'k8sControllersPool'
+var lbProbeName = projectNameAbbrv
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: projectNameAbbrv
@@ -17,9 +21,75 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 resource loadBalancerIpAddress 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: projectNameAbbrv
   location: location
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    dnsSettings: {
+      domainNameLabel: '${projectNameAbbrv}-cw'
+    }
+  }
   sku: {
-    name: 'Basic'
+    name: 'Standard'
+  }
+}
+
+resource loadBalancer 'Microsoft.Network/loadBalancers@2021-08-01' = {
+  name: lbName
+  location: location
+  sku: {
+    name: 'Standard'
     tier: 'Regional'
+  }
+  properties: {
+    frontendIPConfigurations: [
+    {
+        name: lbFrontEndName
+        properties: {
+          publicIPAddress: {
+            id: loadBalancerIpAddress.id
+          }
+        }
+      }
+    ]
+    backendAddressPools: [
+    {
+        name: lbBackendPoolName
+      }
+    ]
+    loadBalancingRules: [
+    {
+        name: 'inboundRule'
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName, lbFrontEndName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, lbBackendPoolName)
+          }
+          frontendPort: 6443
+          backendPort: 6443
+          enableFloatingIP: false
+          idleTimeoutInMinutes: 15
+          protocol: 'Tcp'
+          loadDistribution: 'Default'
+          disableOutboundSnat: true
+          probe: {
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, lbProbeName)
+          }
+        }
+      }
+    ]
+    probes: [
+    {
+        name: lbProbeName
+        properties: {
+          protocol: 'Tcp'
+          port: 6443
+          intervalInSeconds: 5
+          numberOfProbes: 2
+        }
+      }
+    ]
   }
 }
 
@@ -49,6 +119,8 @@ module controller './modules/vm/main.bicep' = [for index in range(1, 3): {
     location: location
     privateIp: '10.240.0.1${index}'
     subnet: network.outputs.subnetId
+    loadBalancerBackendPool: lbBackendPoolName
+    loadBalancer: lbName
     tags: {
       Project: 'kubernetes-the-hard-way'
       Role: 'controller'
