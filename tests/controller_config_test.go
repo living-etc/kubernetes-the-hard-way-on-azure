@@ -15,6 +15,9 @@ func TestControllerConfig(t *testing.T) {
 			"kubernetes.pem",
 			"service-account-key.pem",
 			"service-account.pem",
+			"admin.kubeconfig",
+			"kube-controller-manager.kubeconfig",
+			"kube-scheduler.kubeconfig",
 		}
 
 		for _, file := range pemFiles {

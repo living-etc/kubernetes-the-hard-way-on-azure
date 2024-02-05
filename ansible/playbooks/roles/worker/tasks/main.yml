@@ -1,17 +1,22 @@
 ---
-# tasks file for worker
-- name: Copy PKI key
+- name: Copy PKI key and certificate
   ansible.builtin.copy:
-    src: "../../../../../tls/{{ inventory_hostname }}-key.pem"
-    dest: "/home/ubuntu/{{ inventory_hostname }}-key.pem"
+    src: "../../../../../tls/{{ item }}"
+    dest: "/home/ubuntu/{{ item }}"
     owner: ubuntu
     group: ubuntu
     mode: '0644'
+  loop:
+    - "{{ inventory_hostname }}-key.pem"
+    - "{{ inventory_hostname }}.pem"
 
-- name: Copy PKI certificate
+- name: Copy kubeconfig
   ansible.builtin.copy:
-    src: "../../../../../tls/{{ inventory_hostname }}.pem"
-    dest: "/home/ubuntu/{{ inventory_hostname }}.pem"
+    src: "../../../../../kubeconfig/{{ item }}"
+    dest: "/home/ubuntu/{{ item }}"
     owner: ubuntu
     group: ubuntu
     mode: '0644'
+  loop:
+    - "{{ inventory_hostname }}.kubeconfig"
+    - kube-proxy.kubeconfig

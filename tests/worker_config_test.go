@@ -13,6 +13,8 @@ func TestWorkerConfig(t *testing.T) {
 			"ca.pem",
 			tt.vmName + "-key.pem",
 			tt.vmName + ".pem",
+			tt.vmName + ".kubeconfig",
+			"kube-proxy.kubeconfig",
 		}
 
 		for _, file := range pemFiles {
