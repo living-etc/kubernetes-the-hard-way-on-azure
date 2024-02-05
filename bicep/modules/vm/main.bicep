@@ -26,12 +26,12 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
           publicIPAddress: {
             id: publicIP.id
           }
+          loadBalancerBackendAddressPools: !empty(loadBalancer) && !empty(loadBalancerBackendPool) ? [
+          {
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer, loadBalancerBackendPool) 
+            }
+          ] : []
         }
-        loadBalancerBackendAddressPools: [
-        {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer, loadBalancerBackendPool) 
-          }
-        ]
       }
     ]
     disableTcpStateTracking: false
