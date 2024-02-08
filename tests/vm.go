@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -67,7 +68,7 @@ func (vm VM) connectableOverSSH(publicKeyPath string) (bool, error) {
 	return true, nil
 }
 
-func (vm VM) hasFile(filename string) bool {
+func (vm VM) commandOverSSH(command string) (string, error) {
 	client, err := vm.newSSHSession()
 	check(err, "Unable to connect to "+vm.publicIPAddress)
 
@@ -75,8 +76,27 @@ func (vm VM) hasFile(filename string) bool {
 	check(err, "Unable to open SSH session")
 	defer session.Close()
 
-	cmd := fmt.Sprintf("test -f %v", filename)
-	err = session.Run(cmd)
+	cmd := fmt.Sprintf(command)
+
+	var b bytes.Buffer
+	session.Stdout = &b
+	if err = session.Run(cmd); err != nil {
+		return "", errors.New("Failed to run: " + err.Error())
+	}
+
+	return b.String(), nil
+}
+
+func (vm VM) hostname() string {
+	output, err := vm.commandOverSSH("echo -n $( hostname -s )")
+	check(err, "Error occurred running command over SSH")
+	return output
+}
+
+func (vm VM) hasFile(filename string) bool {
+	command := fmt.Sprintf("test -f %v", filename)
+	_, err := vm.commandOverSSH(command)
+	check(err, "Error occurred running command over SSH")
 
 	if err != nil {
 		return false

@@ -9,6 +9,11 @@ func TestControllerConfig(t *testing.T) {
 		vm, err := vmFromName(tt.vmName)
 		check(err, "Unable to get VM from name")
 
+		hostname := vm.hostname()
+		if hostname != tt.vmName {
+			t.Errorf("wanted %v, got %v", tt.vmName, hostname)
+		}
+
 		pemFiles := []string{
 			"ca.pem",
 			"kubernetes-key.pem",
