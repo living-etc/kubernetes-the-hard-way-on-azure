@@ -18,6 +18,7 @@ func TestControllerConfig(t *testing.T) {
 			"admin.kubeconfig",
 			"kube-controller-manager.kubeconfig",
 			"kube-scheduler.kubeconfig",
+			"encryption-config.yaml",
 		}
 
 		for _, file := range pemFiles {
