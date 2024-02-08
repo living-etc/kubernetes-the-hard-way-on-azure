@@ -1,16 +1,16 @@
-config/all: config/workers config/controllers
+provision/all: provision/workers provision/controllers
 
-config/workers:
+provision/workers:
 	cd ansible; ansible-playbook -i inventory.ini playbooks/workers.yml
 
-config/controllers:
+provision/controllers:
 	cd ansible; ansible-playbook -i inventory.ini playbooks/controllers.yml
 
-config/ping:
+provision/ping:
 	cd ansible; ansible all -m ping -i inventory.ini
 
-config/inventory:
+provision/inventory:
 	cd ansible; ansible-inventory -i inventory.ini --list
 
-config/test:
+provision/test:
 	cd tests; go test -v -run '(TestWorkerConfig|TestControllerConfig)'
