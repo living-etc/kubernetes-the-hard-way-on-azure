@@ -1,2 +1,6 @@
 ---
 # defaults file for controller
+
+controller_hostname:
+controller_private_ip:
+controller_etcd_initial_cluster:

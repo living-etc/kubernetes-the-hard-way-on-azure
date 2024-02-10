@@ -1,0 +1,2 @@
+---
+controller_etcd_initial_cluster: 'controller-1=https://10.240.0.11:2380,controller-2=https://10.240.0.12:2380,controller-3=https://10.240.0.13:2380'

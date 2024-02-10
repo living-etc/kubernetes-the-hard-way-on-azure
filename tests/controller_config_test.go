@@ -34,5 +34,20 @@ func TestControllerConfig(t *testing.T) {
 				}
 			})
 		}
+
+		etcdFiles := []string{
+			"/etc/etcd/ca.pem",
+			"/etc/etcd/kubernetes-key.pem",
+			"/etc/etcd/kubernetes.pem",
+		}
+
+		for _, file := range etcdFiles {
+			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
+				hasFile := vm.hasFile(file)
+				if !hasFile {
+					t.Errorf("%v does not have %v", tt.vmName, file)
+				}
+			})
+		}
 	}
 }

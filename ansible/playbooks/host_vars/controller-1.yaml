@@ -1,0 +1,3 @@
+---
+controller_private_ip: '10.240.0.11'
+controller_hostname: 'controller-1'

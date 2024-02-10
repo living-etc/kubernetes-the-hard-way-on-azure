@@ -24,3 +24,59 @@
     - kube-controller-manager.kubeconfig
     - kube-scheduler.kubeconfig
     - encryption-config.yaml
+
+###################################################################################################
+###################################################################################################
+# Etcd configuration
+###################################################################################################
+###################################################################################################
+
+- name: Create etcd directory
+  ansible.builtin.file:
+    path: /etc/etcd
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+
+- name: Copy PKI keys and certificates
+  ansible.builtin.copy:
+    src: "../../../../../tls/{{ item }}"
+    dest: "/etc/etcd/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  loop:
+    - ca.pem
+    - kubernetes-key.pem
+    - kubernetes.pem
+
+- name: Download and unpack etcd
+  ansible.builtin.unarchive:
+    src: https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Copy etcd and etcdctl into place
+  ansible.builtin.copy:
+    src: "/tmp/etcd-v3.5.12-linux-amd64/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: yes
+  become: true
+  loop:
+    - etcd
+    - etcdctl
+
+- name: Configure systemd unit
+  ansible.builtin.template:
+    src: templates/etcd.unit.j2
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
