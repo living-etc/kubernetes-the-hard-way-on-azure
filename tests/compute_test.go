@@ -6,16 +6,16 @@ import (
 
 func TestCompute(t *testing.T) {
 	for _, tt := range all_tests {
-		vm, err := vmFromName(tt.vmName)
+		vm, err := azureclient.VmFromName(tt.vmName)
 		check(err, "Unable to get VM from name")
 
 		t.Run(tt.vmName+" correct private IP", func(t *testing.T) {
-			if vm.privateIPAddress != tt.privateIP {
-				t.Errorf("Want %v, got %v", tt.privateIP, vm.privateIPAddress)
+			if vm.PrivateIPAddress != tt.privateIP {
+				t.Errorf("Want %v, got %v", tt.privateIP, vm.PrivateIPAddress)
 			}
 		})
 
-		reachable, err := vm.reachableOnPort(22)
+		reachable, err := vm.ReachableOnPort(22)
 		check(err, "Unable to check reachability of VM on port 22")
 		t.Run(tt.vmName+" reachable on port 22", func(t *testing.T) {
 			if !reachable {
@@ -23,7 +23,7 @@ func TestCompute(t *testing.T) {
 			}
 		})
 
-		connectable, err := vm.connectableOverSSH("../0-keys/id_rsa.pub")
+		connectable, err := vm.ConnectableOverSSH("../0-keys/id_rsa.pub")
 		check(err, "Unable to check SSH connectivity")
 		t.Run(tt.vmName+" connectable over SSH", func(t *testing.T) {
 			if !connectable {
@@ -33,7 +33,7 @@ func TestCompute(t *testing.T) {
 
 		t.Run(tt.vmName+" correct DNS name", func(t *testing.T) {
 			want := tt.vmName + "-kthw-cw.uksouth.cloudapp.azure.com"
-			got := vm.dnsName
+			got := vm.DnsName
 			if got != want {
 				t.Errorf("want %v, got %v", want, got)
 			}

@@ -1,9 +1,23 @@
 package main
 
+import (
+	"log"
+
+	"github.com/living-etc/go-server-test/azure"
+)
+
 const (
 	subscriptionId    = "767c436e-682c-42c0-88f5-66d53a80176d"
 	resourceGroupName = "kubernetes-the-hard-way"
 )
+
+func check(err error, message string) {
+	if err != nil {
+		log.Fatalf("%v: %v", message, err)
+	}
+}
+
+var azureclient = azure.NewAzureClient(subscriptionId, resourceGroupName)
 
 var all_tests = append(worker_tests, controller_tests...)
 

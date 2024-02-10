@@ -6,10 +6,10 @@ import (
 
 func TestControllerConfig(t *testing.T) {
 	for _, tt := range controller_tests {
-		vm, err := vmFromName(tt.vmName)
+		vm, err := azureclient.VmFromName(tt.vmName)
 		check(err, "Unable to get VM from name")
 
-		hostname := vm.hostname()
+		hostname := vm.Hostname()
 		if hostname != tt.vmName {
 			t.Errorf("wanted %v, got %v", tt.vmName, hostname)
 		}
@@ -28,7 +28,7 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, file := range pemFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.hasFile(file)
+				hasFile := vm.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}
@@ -43,7 +43,7 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, file := range etcdFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.hasFile(file)
+				hasFile := vm.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}

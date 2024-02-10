@@ -6,7 +6,7 @@ import (
 
 func TestWorkerConfig(t *testing.T) {
 	for _, tt := range worker_tests {
-		vm, err := vmFromName(tt.vmName)
+		vm, err := azureclient.VmFromName(tt.vmName)
 		check(err, "Unable to get VM from name")
 
 		pemFiles := []string{
@@ -19,7 +19,7 @@ func TestWorkerConfig(t *testing.T) {
 
 		for _, file := range pemFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.hasFile(file)
+				hasFile := vm.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}
