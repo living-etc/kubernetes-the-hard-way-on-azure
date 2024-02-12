@@ -2,4 +2,4 @@
 - hosts: controllers
   roles:
     - common
-    - controller
+    - etcd-cluster-node
