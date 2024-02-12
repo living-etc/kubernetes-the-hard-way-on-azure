@@ -49,5 +49,20 @@ func TestControllerConfig(t *testing.T) {
 				}
 			})
 		}
+
+		services := []string{
+			"etcd",
+		}
+
+		for _, service := range services {
+			t.Run(tt.vmName+": service "+service+" is running", func(t *testing.T) {
+				got := vm.Service(service).IsActive
+				want := "active"
+
+				if got != want {
+					t.Errorf("wanted %v, got %v", want, got)
+				}
+			})
+		}
 	}
 }
