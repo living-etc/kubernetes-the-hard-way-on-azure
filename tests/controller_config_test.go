@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/living-etc/go-server-test/ssh"
 )
 
 func TestControllerConfig(t *testing.T) {
 	for _, tt := range controller_tests {
-		vm, err := azureclient.VmFromName(tt.vmName)
+		sshclient, err := ssh.NewSshClient(privateKey, tt.hostname)
 		check(err, "Unable to get VM from name")
 
-		hostname := vm.Hostname()
+		hostname := sshclient.Hostname()
 		if hostname != tt.vmName {
 			t.Errorf("wanted %v, got %v", tt.vmName, hostname)
 		}
@@ -30,7 +32,7 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, file := range pemFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.HasFile(file)
+				hasFile := sshclient.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}
@@ -45,7 +47,7 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, file := range etcdFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.HasFile(file)
+				hasFile := sshclient.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}
@@ -58,7 +60,7 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, service := range services {
 			t.Run(tt.vmName+": service "+service+" is running", func(t *testing.T) {
-				got := vm.Service(service).IsActive
+				got := sshclient.Service(service).IsActive
 				want := "active"
 
 				if got != want {
@@ -75,7 +77,7 @@ func TestControllerConfig(t *testing.T) {
         --cert=/etc/etcd/kubernetes.pem \
         --key=/etc/etcd/kubernetes-key.pem`
 
-				got := vm.Command(command)
+				got := sshclient.Command(command)
 
 				for _, member := range controller_tests {
 					t.Run(tt.vmName+": etcd member", func(t *testing.T) {

@@ -2,7 +2,10 @@ module kthw
 
 go 1.21.1
 
-require github.com/living-etc/go-server-test/azure v0.0.0-00010101000000-000000000000
+require (
+	github.com/living-etc/go-server-test/azure v0.0.0-00010101000000-000000000000
+	github.com/living-etc/go-server-test/ssh v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.9.2 // indirect
@@ -23,3 +26,5 @@ require (
 )
 
 replace github.com/living-etc/go-server-test/azure => ../../go-server-test/azure
+
+replace github.com/living-etc/go-server-test/ssh => ../../go-server-test/ssh

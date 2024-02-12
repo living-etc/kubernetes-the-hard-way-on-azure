@@ -15,22 +15,6 @@ func TestCompute(t *testing.T) {
 			}
 		})
 
-		reachable, err := vm.ReachableOnPort(22)
-		check(err, "Unable to check reachability of VM on port 22")
-		t.Run(tt.vmName+" reachable on port 22", func(t *testing.T) {
-			if !reachable {
-				t.Errorf("%v: not reachable on port 22", tt.vmName)
-			}
-		})
-
-		connectable, err := vm.ConnectableOverSSH("../0-keys/id_rsa.pub")
-		check(err, "Unable to check SSH connectivity")
-		t.Run(tt.vmName+" connectable over SSH", func(t *testing.T) {
-			if !connectable {
-				t.Errorf("%v: not connectable over ssh", tt.vmName)
-			}
-		})
-
 		t.Run(tt.vmName+" correct DNS name", func(t *testing.T) {
 			want := tt.vmName + "-kthw-cw.uksouth.cloudapp.azure.com"
 			got := vm.DnsName

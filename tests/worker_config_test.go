@@ -2,11 +2,13 @@ package main
 
 import (
 	"testing"
+
+	"github.com/living-etc/go-server-test/ssh"
 )
 
 func TestWorkerConfig(t *testing.T) {
 	for _, tt := range worker_tests {
-		vm, err := azureclient.VmFromName(tt.vmName)
+		sshclient, err := ssh.NewSshClient(privateKey, tt.hostname)
 		check(err, "Unable to get VM from name")
 
 		pemFiles := []string{
@@ -19,7 +21,7 @@ func TestWorkerConfig(t *testing.T) {
 
 		for _, file := range pemFiles {
 			t.Run(tt.vmName+" has "+file, func(t *testing.T) {
-				hasFile := vm.HasFile(file)
+				hasFile := sshclient.HasFile(file)
 				if !hasFile {
 					t.Errorf("%v does not have %v", tt.vmName, file)
 				}
