@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -61,6 +63,29 @@ func TestControllerConfig(t *testing.T) {
 
 				if got != want {
 					t.Errorf("wanted %v, got %v", want, got)
+				}
+			})
+		}
+
+		if tt.vmName == "controller-1" {
+			t.Run(tt.vmName+": etcd member list", func(t *testing.T) {
+				command := `sudo ETCDCTL_API=3 etcdctl member list \
+        --endpoints=https://127.0.0.1:2379 \
+        --cacert=/etc/etcd/ca.pem \
+        --cert=/etc/etcd/kubernetes.pem \
+        --key=/etc/etcd/kubernetes-key.pem`
+
+				got := vm.Command(command)
+
+				for _, member := range controller_tests {
+					t.Run(tt.vmName+": etcd member", func(t *testing.T) {
+						memberName := member.vmName
+						want := fmt.Sprintf("started, %v", memberName)
+
+						if !strings.Contains(got, want) {
+							t.Errorf("%v not a member of etcd cluster: %v", memberName, got)
+						}
+					})
 				}
 			})
 		}
