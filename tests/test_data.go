@@ -11,6 +11,7 @@ const (
 	subscriptionId     = "767c436e-682c-42c0-88f5-66d53a80176d"
 	resourceGroupName  = "kubernetes-the-hard-way"
 	privateKeyFilePath = "../keys/id_rsa"
+	loadBalancerHost   = "https://kthw-cw.uksouth.cloudapp.azure.com"
 )
 
 func check(err error, message string) {

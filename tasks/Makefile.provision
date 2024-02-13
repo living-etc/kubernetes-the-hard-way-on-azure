@@ -1,10 +1,12 @@
 provision/all: provision/workers provision/controllers
 
 provision/workers:
-	cd ansible; ansible-playbook -i inventory.ini playbooks/workers.yml
+	cd ansible; ansible-playbook -i inventory.ini playbooks/workers.yml \
+		--extra-vars "kubernetes_control_plane_node_public_ip=$( ../scripts/get-public-ip.sh )"
 
 provision/controllers:
-	cd ansible; ansible-playbook -i inventory.ini playbooks/controllers.yml
+	cd ansible; ansible-playbook -i inventory.ini playbooks/controllers.yml \
+		--extra-vars "kubernetes_control_plane_node_public_ip=$( ../scripts/get-public-ip.sh )"
 
 provision/ping:
 	cd ansible; ansible all -m ping -i inventory.ini

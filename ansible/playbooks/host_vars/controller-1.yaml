@@ -1,3 +1,4 @@
 ---
 controller_private_ip: '10.240.0.11'
 controller_hostname: 'controller-1'
+kubernetes_control_plane_node_private_ip: "{{ controller_private_ip }}"

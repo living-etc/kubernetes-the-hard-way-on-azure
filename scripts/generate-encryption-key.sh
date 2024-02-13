@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-KUBECONFIG_PATH=kubeconfig
+TLS_PATH=tls
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
-cat > ${KUBECONFIG_PATH}/encryption-config.yaml <<EOF
+cat > ${TLS_PATH}/encryption-config.yaml <<EOF
 kind: EncryptionConfig
 apiVersion: v1
 resources:

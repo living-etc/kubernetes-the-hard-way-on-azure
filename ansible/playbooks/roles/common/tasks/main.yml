@@ -12,3 +12,11 @@
     owner: ubuntu
     group: ubuntu
     mode: '0644'
+
+- name: Copy admin kubeconfig
+  ansible.builtin.copy:
+    src: ../../../../../kubeconfig/admin.kubeconfig
+    dest: /home/ubuntu/admin.kubeconfig
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'

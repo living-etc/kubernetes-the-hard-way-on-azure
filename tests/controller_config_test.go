@@ -1,12 +1,23 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/living-etc/go-server-test/ssh"
 )
+
+type KubernetesVersionInfo struct {
+	Major string `json:"major`
+	Minor string `json:"minor`
+}
 
 func TestControllerConfig(t *testing.T) {
 	for _, tt := range controller_tests {
@@ -67,6 +78,48 @@ func TestControllerConfig(t *testing.T) {
 							t.Errorf("%v not a member of etcd cluster: %v", memberName, got)
 						}
 					})
+				}
+			})
+		}
+
+		if tt.vmName == "controller-1" {
+			t.Run(tt.vmName+": kubernetes version info", func(t *testing.T) {
+				caCert, err := os.ReadFile("../tls/ca.pem")
+				check(err, "")
+
+				caCertPool := x509.NewCertPool()
+				caCertPool.AppendCertsFromPEM(caCert)
+
+				client := &http.Client{
+					Transport: &http.Transport{
+						TLSClientConfig: &tls.Config{
+							InsecureSkipVerify: true,
+						},
+					},
+				}
+
+				host := fmt.Sprintf("%v:6443/version", loadBalancerHost)
+				resp, err := client.Get(host)
+				check(err, "")
+				defer resp.Body.Close()
+
+				body, err := io.ReadAll(resp.Body)
+				check(err, "")
+
+				var kubernetesVersionInfo KubernetesVersionInfo
+
+				err = json.Unmarshal([]byte(body), &kubernetesVersionInfo)
+				check(err, "")
+
+				kubernetesVersionGot := fmt.Sprintf(
+					"%v.%v",
+					kubernetesVersionInfo.Major,
+					kubernetesVersionInfo.Minor,
+				)
+				kubernetesVersionWant := "1.21"
+
+				if kubernetesVersionGot != kubernetesVersionWant {
+					t.Errorf("want %v, got %v", kubernetesVersionWant, kubernetesVersionGot)
 				}
 			})
 		}

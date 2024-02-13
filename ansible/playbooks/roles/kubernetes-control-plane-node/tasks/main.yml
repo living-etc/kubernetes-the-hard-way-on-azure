@@ -1,0 +1,6 @@
+---
+- name: Configure the Kubernetes control plane
+  ansible.builtin.include_tasks: kubernetes-control-plane.yaml
+
+- name: Configure load balancer health checks
+  ansible.builtin.include_tasks: load-balancer-health-checks.yaml

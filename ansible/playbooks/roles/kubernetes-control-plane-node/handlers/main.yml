@@ -1,0 +1,12 @@
+---
+# handlers file for kubernetes-control-plane-node
+- name: Systemd daemon_reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+
+- name: Restart nginx
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: restarted
+  become: true
