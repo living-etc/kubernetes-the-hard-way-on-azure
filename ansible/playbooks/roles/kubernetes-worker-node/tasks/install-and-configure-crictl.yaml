@@ -9,7 +9,7 @@
 
 - name: Unpack crictl
   ansible.builtin.copy:
-    src: /tmp/crictl
+    src: /tmp/crictl-v1.21.0-linux-amd64.tar.gz
     dest: /usr/local/bin/crictl
     owner: root
     group: root

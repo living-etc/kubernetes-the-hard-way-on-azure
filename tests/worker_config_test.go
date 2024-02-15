@@ -54,5 +54,25 @@ func TestWorkerConfig(t *testing.T) {
 				}
 			})
 		}
+
+		serviceNames := []string{
+			"kubelet",
+			"kube-proxy",
+			"containerd",
+		}
+
+		for _, serviceName := range serviceNames {
+			t.Run(tt.vmName+": "+serviceName, func(t *testing.T) {
+				service, _ := sshclient.Service(serviceName)
+
+				if service.Enabled != "enabled" {
+					t.Errorf("want %v, got %v", "enabled", service.Enabled)
+				}
+
+				if service.Active != "active (running)" {
+					t.Errorf("want %v, got %v", "active (running)", service.Active)
+				}
+			})
+		}
 	}
 }

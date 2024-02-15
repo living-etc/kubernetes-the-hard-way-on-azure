@@ -1,33 +1,28 @@
-- name: |
-    Install cocat
-    DESC [Enables support for the kubectl port-forward command]
+- name: Install cocat (1/1) - Enables support for the kubectl port-forward command
   ansible.builtin.apt:
     name:
       - socat
     state: present
+    update_cache: true
   become: true
 
-- name: |
-    Install ipset
-    DESC [Used to enforce network policies]
+- name: Install ipset (1/1) - Used to enforce network policies
   ansible.builtin.apt:
     name:
       - ipset
     state: present
+    update_cache: true
   become: true
 
-- name: |
-    Install conntrack
-    DESC [Used by the node to track network connections between the pods]
+- name: Install conntrack (1/1) - Used by the node to track network connections between the pods
   ansible.builtin.apt:
     name:
       - conntrack
     state: present
+    update_cache: true
   become: true
 
-- name: |
-    Download kubectl binary
-    DESC [Command line tool for communicating with the cluster's control plane]
+- name: Download kubectl binary (1/1) - Command line tool for communicating with the cluster's control plane
   ansible.builtin.get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kubectl
     dest: /usr/local/bin/kubectl

@@ -1,12 +1,4 @@
-- name: |
-    Disable SWAP
-    DESC [Kubernetes workers can't start with swap enabled]
-  shell: |
-    swapoff -a
-
-- name: |
-    Disable SWAP on boot
-    DESC [Swap will be re-enabled each time the node reboots without this step]
+- name: Disable SWAP (1/1) - Swap will be re-enabled each time the node reboots without this step. Machine will be rebooted once fully provisioned, disabling SWAP if it was already enabled.
   replace:
     path: /etc/fstab
     regexp: '^([^#].*?\sswap\s+sw\s+.*)$'

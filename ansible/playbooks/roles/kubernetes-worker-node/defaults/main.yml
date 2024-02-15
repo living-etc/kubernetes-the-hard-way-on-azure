@@ -1,3 +1,3 @@
 ---
-# defaults file for kubernetes-worker-node
 kubernetes_worker_node_pod_cidr:
+kubernetes_worker_node_cluster_cidr:

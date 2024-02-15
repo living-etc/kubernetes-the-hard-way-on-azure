@@ -1,0 +1,2 @@
+---
+kubernetes_worker_node_cluster_cidr: "10.200.0.0/16"

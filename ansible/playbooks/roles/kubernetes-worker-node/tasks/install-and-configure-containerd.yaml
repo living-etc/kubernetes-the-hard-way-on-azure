@@ -1,13 +1,11 @@
-- name: Download containerd release archive
+- name: Install containerd (1/4) - Download containerd release archive
   ansible.builtin.get_url:
     url: https://github.com/containerd/containerd/releases/download/v1.4.4/containerd-1.4.4-linux-amd64.tar.gz 
     dest: /tmp
     mode: '0644'
   become: true
 
-- name: |
-    Create temporary directory
-    DESC [This is needed to hold the contents of the containerd before they can be copied into place]
+- name: Install containerd (2/4) - Create a temporary directory to hold the contents of the containerd before they can be copied into place
   ansible.builtin.file:
     path: /tmp/containerd
     state: directory
@@ -16,7 +14,7 @@
     group: root
   become: true
 
-- name: Unpack the containerd binaries
+- name: Install containerd (3/4) - Unpack the containerd binaries
   ansible.builtin.unarchive:
     src: /tmp/containerd-1.4.4-linux-amd64.tar.gz
     dest: /tmp/containerd/
@@ -24,7 +22,7 @@
     mode: '0755'
   become: true
 
-- name: Copy containerd binaries into place
+- name: Install containerd (4/4) - Copy containerd binaries into place
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -39,3 +37,39 @@
     - { src: '/tmp/containerd/bin/containerd-shim-runc-v1', dest: '/bin/containerd-shim-runc-v1' }
     - { src: '/tmp/containerd/bin/containerd-shim-runc-v2', dest: '/bin/containerd-shim-runc-v2' }
     - { src: '/tmp/containerd/bin/ctr',                     dest: '/bin/ctr' }
+
+- name: Configure containerd (1/2) - Create containerd configuration directory
+  ansible.builtin.file:
+    path: /etc/containerd
+    state: directory
+    mode: '0644'
+    owner: root
+    group: root
+  become: true
+
+- name: Configure containerd (2/2) - Copy containerd configuration file
+  ansible.builtin.copy:
+    src: containerd.toml
+    dest: /etc/containerd/config.toml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Configure containerd service (1/2) - Copy containerd systemd unit file
+  ansible.builtin.copy:
+    src: containerd.service
+    dest: /etc/systemd/system/containerd.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Configure containerd service (2/2) - Enable and start the containerd service
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: containerd
+  become: true
+  notify:
+    - Systemd daemon_reload

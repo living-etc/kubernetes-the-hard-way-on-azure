@@ -50,8 +50,9 @@ func TestControllerConfig(t *testing.T) {
 
 		for _, service := range services {
 			t.Run(tt.vmName+": service "+service+" is running", func(t *testing.T) {
-				got := sshclient.Service(service).IsActive
-				want := "active"
+				service, _ := sshclient.Service(service)
+				got := service.Active
+				want := "active (running)"
 
 				if got != want {
 					t.Errorf("wanted %v, got %v", want, got)

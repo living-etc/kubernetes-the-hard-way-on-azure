@@ -26,14 +26,6 @@
 - name: Install and configure crictl
   ansible.builtin.include_tasks: install-and-configure-crictl.yaml
 
-- name: Create directories
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0644'
-    owner: root
-    group: root
+- name: Reboot the machine
+  ansible.builtin.reboot:
   become: true
-  loop:
-    - /var/lib/kubernetes
-    - /var/run/kubernetes

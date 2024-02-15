@@ -1,19 +1,75 @@
-- name: |
-    Create configuration directory
-    DESC []
+- name: Configure kubelet (1/5) - Create data directories
   ansible.builtin.file:
-    path: /var/lib/kubelet
+    path: /var/lib/{{ item }}
     state: directory
     mode: '0644'
     owner: root
     group: root
   become: true
+  loop:
+    - kubelet
+    - kubernetes
 
-- name: |
-    Download kubelet binary
-    DESC [Primary agent running on each node, registering the node with the API server and in charge of executing pod requirements from the API server]
+- name: Configure kubelet (2/5) - Upload certificates and keys for worker
+  ansible.builtin.copy:
+    src: ../../../../tls/{{ item }}
+    dest: /var/lib/kubelet/{{ item }}
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  loop:
+    - "{{ inventory_hostname }}.pem"
+    - "{{ inventory_hostname }}-key.pem"
+
+- name: Configure kubelet (3/5) - Upload kubeconfig
+  ansible.builtin.copy:
+    src: ../../../../kubeconfig/{{ inventory_hostname }}.kubeconfig
+    dest: /var/lib/kubelet/kubeconfig
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Configure kubelet (4/5) - Upload kubernete certificate
+  ansible.builtin.copy:
+    src: ../../../../tls/ca.pem
+    dest: /var/lib/kubernetes/ca.pem
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Configure kubelet (5/5) - Upload kubelet config file
+  ansible.builtin.template:
+    src: kubelet-config.yaml.j2
+    dest: /var/lib/kubelet/kubelet-config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Download kubelet binary (1/1) - Primary agent running on each node, registering the node with the API server and in charge of executing pod requirements from the API server
   ansible.builtin.get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kubelet
     dest: /usr/local/bin/kubelet
     mode: '0755'
   become: true
+
+- name: Configure kubelet service (1/2) - Copy unit file into place
+  ansible.builtin.copy:
+    src: kubelet.service
+    dest: /etc/systemd/system/kubelet.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Configure kubelet service (2/2) - Enable and start the service
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: kubelet
+  become: true
+  notify:
+    - Systemd daemon_reload
