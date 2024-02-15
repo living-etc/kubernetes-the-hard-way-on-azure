@@ -1,0 +1,17 @@
+- name: Create configuration directory
+  ansible.builtin.file:
+    path: /var/lib/kube-proxy
+    state: directory
+    mode: '0644'
+    owner: root
+    group: root
+  become: true
+
+- name: |
+    Download kube-proxy binary
+    DESC [Provides high level network features including load balancing and service discovery between pods]
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kube-proxy
+    dest: /usr/local/bin/kube-proxy
+    mode: '0755'
+  become: true

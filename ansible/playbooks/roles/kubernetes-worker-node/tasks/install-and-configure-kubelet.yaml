@@ -1,0 +1,19 @@
+- name: |
+    Create configuration directory
+    DESC []
+  ansible.builtin.file:
+    path: /var/lib/kubelet
+    state: directory
+    mode: '0644'
+    owner: root
+    group: root
+  become: true
+
+- name: |
+    Download kubelet binary
+    DESC [Primary agent running on each node, registering the node with the API server and in charge of executing pod requirements from the API server]
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kubelet
+    dest: /usr/local/bin/kubelet
+    mode: '0755'
+  become: true

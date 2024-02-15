@@ -1,0 +1,18 @@
+- name: |
+    Download crictl release tarball
+    DESC [A CLI tool used to inspect and debug container runtimes and applications]
+  ansible.builtin.get_url:
+    url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.21.0/crictl-v1.21.0-linux-amd64.tar.gz
+    dest: /tmp
+    mode: '0644'
+  become: true
+
+- name: Unpack crictl
+  ansible.builtin.copy:
+    src: /tmp/crictl
+    dest: /usr/local/bin/crictl
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: yes
+  become: true

@@ -1,4 +1,11 @@
 ---
+- name: |
+    Update APT cache
+    DESC [Update the cache once at the beginning so subsequent tasks don't meed to]
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
+
 - name: Set a hostname
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"

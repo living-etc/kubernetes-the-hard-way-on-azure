@@ -1,0 +1,41 @@
+- name: Download containerd release archive
+  ansible.builtin.get_url:
+    url: https://github.com/containerd/containerd/releases/download/v1.4.4/containerd-1.4.4-linux-amd64.tar.gz 
+    dest: /tmp
+    mode: '0644'
+  become: true
+
+- name: |
+    Create temporary directory
+    DESC [This is needed to hold the contents of the containerd before they can be copied into place]
+  ansible.builtin.file:
+    path: /tmp/containerd
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+
+- name: Unpack the containerd binaries
+  ansible.builtin.unarchive:
+    src: /tmp/containerd-1.4.4-linux-amd64.tar.gz
+    dest: /tmp/containerd/
+    remote_src: yes
+    mode: '0755'
+  become: true
+
+- name: Copy containerd binaries into place
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: yes
+  become: true
+  loop:
+    - { src: '/tmp/containerd/bin/containerd',              dest: '/bin/containerd' }
+    - { src: '/tmp/containerd/bin/containerd-shim',         dest: '/bin/containerd-shim' }
+    - { src: '/tmp/containerd/bin/containerd-shim-runc-v1', dest: '/bin/containerd-shim-runc-v1' }
+    - { src: '/tmp/containerd/bin/containerd-shim-runc-v2', dest: '/bin/containerd-shim-runc-v2' }
+    - { src: '/tmp/containerd/bin/ctr',                     dest: '/bin/ctr' }
