@@ -2,4 +2,4 @@
 - hosts: workers
   roles:
     - common
-    - worker
+    - kubernetes-worker-node

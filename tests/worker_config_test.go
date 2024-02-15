@@ -27,5 +27,32 @@ func TestWorkerConfig(t *testing.T) {
 				}
 			})
 		}
+
+		binaries := []string{
+			"/usr/local/bin/kube-proxy",
+			"/usr/local/bin/kubelet",
+			"/usr/local/bin/kubectl",
+			"/usr/local/bin/runc",
+			"/usr/local/bin/crictl",
+			"/bin/containerd",
+			"/bin/containerd-shim",
+			"/bin/containerd-shim-runc-v1",
+			"/bin/containerd-shim-runc-v2",
+			"/bin/ctr",
+		}
+
+		for _, file := range binaries {
+			t.Run(tt.vmName+": "+file, func(t *testing.T) {
+				file, _ := sshclient.File(file)
+
+				if file.OwnerName != "root" {
+					t.Errorf("want %v, got %v", "root", file.OwnerName)
+				}
+
+				if file.Mode != "0755" {
+					t.Errorf("want %v, got %v", "0755", file.Mode)
+				}
+			})
+		}
 	}
 }
