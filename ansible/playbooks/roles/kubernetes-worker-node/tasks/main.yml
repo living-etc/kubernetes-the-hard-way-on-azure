@@ -8,17 +8,14 @@
 - name: Install and configure CNI networking
   ansible.builtin.include_tasks: install-and-configure-cni-networking.yaml
 
-- name: Install and configure kubelet
-  ansible.builtin.include_tasks: install-and-configure-kubelet.yaml
+- name: Install and configure containerd
+  ansible.builtin.include_tasks: install-and-configure-containerd.yaml
 
 - name: Install and configure kubelet
   ansible.builtin.include_tasks: install-and-configure-kubelet.yaml
 
 - name: Install and configure kube-proxy
   ansible.builtin.include_tasks: install-and-configure-kube-proxy.yaml
-
-- name: Install and configure containerd
-  ansible.builtin.include_tasks: install-and-configure-containerd.yaml
 
 - name: Install and configure runc
   ansible.builtin.include_tasks: install-and-configure-runc.yaml
