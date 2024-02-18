@@ -4,3 +4,7 @@
 
 - name: Configure load balancer health checks
   ansible.builtin.include_tasks: load-balancer-health-checks.yaml
+
+- name: Reboot the machine
+  ansible.builtin.reboot:
+  become: true

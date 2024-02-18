@@ -1,0 +1,10 @@
+kubernetes/all: kubernetes/apply
+
+kubernetes/plan:
+	terraform -chdir=terraform plan
+
+kubernetes/apply:
+	terraform -chdir=terraform apply
+
+kubernetes/test:
+	cd tests; go test -run '(TestKubernetesConfig)'
