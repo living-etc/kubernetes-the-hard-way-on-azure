@@ -1,23 +1,13 @@
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
 	"strings"
 	"testing"
 
+	"github.com/living-etc/go-server-test/kubernetes"
 	"github.com/living-etc/go-server-test/ssh"
 )
-
-type KubernetesVersionInfo struct {
-	Major string `json:"major`
-	Minor string `json:"minor`
-}
 
 func TestControllerConfig(t *testing.T) {
 	for _, tt := range controller_tests {
@@ -81,43 +71,40 @@ func TestControllerConfig(t *testing.T) {
 					})
 				}
 			})
-		}
 
-		if tt.vmName == "controller-1" {
-			t.Run(tt.vmName+": kubernetes version info", func(t *testing.T) {
-				caCert, err := os.ReadFile("../tls/ca.pem")
-				check(err, "")
+			workers, err := kubernetesclient.Workers()
+			if err != nil {
+				t.Error(err.Error())
+			}
+			t.Run("number of workers", func(t *testing.T) {
+				got := len(workers)
+				want := 3
+				if got != want {
+					t.Errorf("want %v, got %v", want, got)
+				}
+			})
 
-				caCertPool := x509.NewCertPool()
-				caCertPool.AppendCertsFromPEM(caCert)
-
-				client := &http.Client{
-					Transport: &http.Transport{
-						TLSClientConfig: &tls.Config{
-							InsecureSkipVerify: true,
-						},
-					},
+			t.Run("state of workers", func(t *testing.T) {
+				notReadyWorkers := []kubernetes.Worker{}
+				for _, worker := range workers {
+					if worker.Status != "Ready" {
+						notReadyWorkers = append(notReadyWorkers, worker)
+					}
 				}
 
-				host := fmt.Sprintf("%v:6443/version", loadBalancerHost)
-				resp, err := client.Get(host)
-				check(err, "")
-				defer resp.Body.Close()
+				noOfNotReadyWorkers := len(notReadyWorkers)
+				if noOfNotReadyWorkers > 0 {
+					t.Errorf(
+						"%v workers not in READY state: %v",
+						noOfNotReadyWorkers,
+						notReadyWorkers,
+					)
+				}
+			})
 
-				body, err := io.ReadAll(resp.Body)
-				check(err, "")
-
-				var kubernetesVersionInfo KubernetesVersionInfo
-
-				err = json.Unmarshal([]byte(body), &kubernetesVersionInfo)
-				check(err, "")
-
-				kubernetesVersionGot := fmt.Sprintf(
-					"%v.%v",
-					kubernetesVersionInfo.Major,
-					kubernetesVersionInfo.Minor,
-				)
+			t.Run(tt.vmName+": kubernetes version info", func(t *testing.T) {
 				kubernetesVersionWant := "1.21"
+				kubernetesVersionGot := kubernetesclient.Version().Full
 
 				if kubernetesVersionGot != kubernetesVersionWant {
 					t.Errorf("want %v, got %v", kubernetesVersionWant, kubernetesVersionGot)

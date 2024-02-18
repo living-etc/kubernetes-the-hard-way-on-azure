@@ -1,17 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 
 	"github.com/living-etc/go-server-test/azure"
+	"github.com/living-etc/go-server-test/kubernetes"
 )
 
 const (
-	subscriptionId     = "767c436e-682c-42c0-88f5-66d53a80176d"
-	resourceGroupName  = "kubernetes-the-hard-way"
-	privateKeyFilePath = "../keys/id_rsa"
-	loadBalancerHost   = "https://kthw-cw.uksouth.cloudapp.azure.com"
+	subscriptionId    = "767c436e-682c-42c0-88f5-66d53a80176d"
+	resourceGroupName = "kubernetes-the-hard-way"
+	loadBalancerHost  = "https://kthw-cw.uksouth.cloudapp.azure.com"
 )
 
 func check(err error, message string) {
@@ -21,8 +24,17 @@ func check(err error, message string) {
 }
 
 var (
-	azureclient   = azure.NewAzureClient(subscriptionId, resourceGroupName)
-	privateKey, _ = os.ReadFile(privateKeyFilePath)
+	azureclient      = azure.NewAzureClient(subscriptionId, resourceGroupName)
+	kubernetesclient = kubernetes.NewKubernetesClient(
+		kubeConfigPath,
+		caCertPath,
+		loadBalancerHost,
+	)
+	privateKey, _         = os.ReadFile(privateKeyFilePath)
+	caCertPath, _         = filepath.Abs("../tls/ca.pem")
+	privateKeyFilePath, _ = filepath.Abs("../keys/id_rsa")
+	currentUser, _        = user.Current()
+	kubeConfigPath        = fmt.Sprintf("%v/.kube/config", currentUser.HomeDir)
 )
 
 var all_tests = append(worker_tests, controller_tests...)

@@ -18,6 +18,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/living-etc/go-server-test/kubernetes v0.0.0-00010101000000-000000000000 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
@@ -28,3 +29,5 @@ require (
 replace github.com/living-etc/go-server-test/azure => ../../go-server-test/azure
 
 replace github.com/living-etc/go-server-test/ssh => ../../go-server-test/ssh
+
+replace github.com/living-etc/go-server-test/kubernetes => ../../go-server-test/kubernetes
