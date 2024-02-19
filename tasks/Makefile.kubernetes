@@ -1,10 +1,10 @@
 kubernetes/all: kubernetes/apply
 
 kubernetes/plan:
-	terraform -chdir=terraform plan
+	cd terraform; aws-profile -p root ./init.sh; aws-profile -p root terraform plan
 
 kubernetes/apply:
-	terraform -chdir=terraform apply
+	cd terraform; aws-profile -p root terraform apply -auto-approve
 
 kubernetes/test:
 	cd tests; go test -run '(TestKubernetesConfig)'
