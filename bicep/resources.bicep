@@ -143,3 +143,19 @@ module worker './modules/vm/main.bicep' = [for index in range(1, 3): {
     }
   }
 }]
+
+resource routeTable 'Microsoft.Network/routeTables@2023-04-01' = {
+  name: projectNameAbbrv
+  location: location
+}
+
+resource route 'Microsoft.Network/routeTables/routes@2023-04-01' = [for i in range(1,3): {
+  name: 'worker-${i}'
+  parent: routeTable
+  properties: {
+    addressPrefix: '10.200.${i}.0/24'
+    hasBgpOverride: false
+    nextHopIpAddress: '10.240.0.2${i}'
+    nextHopType: 'VirtualAppliance'
+  }
+}]

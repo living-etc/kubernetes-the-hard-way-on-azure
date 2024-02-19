@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/living-etc/go-server-test/ssh"
@@ -54,6 +55,41 @@ func TestWorkerConfig(t *testing.T) {
 
 				if service.Active != "active (running)" {
 					t.Errorf("want %v, got %v", "active (running)", service.Active)
+				}
+			})
+		}
+
+		cniPlugins := []string{
+			"bandwidth",
+			"bridge",
+			"dhcp",
+			"firewall",
+			"flannel",
+			"host-device",
+			"host-local",
+			"ipvlan",
+			"loopback",
+			"macvlan",
+			"portmap",
+			"ptp",
+			"sbr",
+			"static",
+			"tuning",
+			"vlan",
+			"vrf",
+		}
+
+		for _, cniPlugin := range cniPlugins {
+			t.Run(tt.vmName+" has cni binary "+cniPlugin, func(t *testing.T) {
+				file, err := sshclient.File(fmt.Sprintf("/opt/cni/bin/%v", cniPlugin))
+				if err != nil {
+					t.Error(err)
+				}
+				modeGot := file.Mode
+				modeWant := "0755"
+
+				if modeGot != modeWant {
+					t.Errorf("want %v, got %v", modeWant, modeGot)
 				}
 			})
 		}
