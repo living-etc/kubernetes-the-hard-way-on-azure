@@ -93,5 +93,26 @@ func TestWorkerConfig(t *testing.T) {
 				}
 			})
 		}
+
+		configFiles := []string{
+			"/etc/containerd/config.toml",
+			"/var/lib/kubelet/kubelet-config.yaml",
+			"/etc/cni/net.d/10-bridge.conf",
+			"/etc/cni/net.d/99-loopback.conf",
+			"/var/lib/kube-proxy/kubeconfig",
+			"/var/lib/kubelet/kubeconfig",
+			"/var/lib/kubernetes/ca.pem",
+			fmt.Sprintf("/var/lib/kubelet/%v-key.pem", tt.vmName),
+			fmt.Sprintf("/var/lib/kubelet/%v.pem", tt.vmName),
+		}
+
+		for _, configFile := range configFiles {
+			t.Run(tt.vmName+" has config file "+configFile, func(t *testing.T) {
+				_, err := sshclient.File(configFile)
+				if err != nil {
+					t.Error(err)
+				}
+			})
+		}
 	}
 }
