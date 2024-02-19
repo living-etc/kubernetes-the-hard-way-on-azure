@@ -74,7 +74,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
     }
 
     hardwareProfile: {
-      vmSize: 'Standard_B1ms'
+      vmSize: 'Standard_B2s'
     }
 
     networkProfile: {
