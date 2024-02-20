@@ -1,0 +1,35 @@
+Host worker-1
+  User ubuntu
+  Hostname worker-1-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no
+
+Host worker-2
+  User ubuntu
+  Hostname worker-2-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no
+
+Host worker-3
+  User ubuntu
+  Hostname worker-3-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no
+
+Host controller-1
+  User ubuntu
+  Hostname controller-1-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no
+
+Host controller-2
+  User ubuntu
+  Hostname controller-2-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no
+
+Host controller-3
+  User ubuntu
+  Hostname controller-3-kthw-cw.uksouth.cloudapp.azure.com
+  IdentityFile id_rsa
+  StrictHostKeyChecking no

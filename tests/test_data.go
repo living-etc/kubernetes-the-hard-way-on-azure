@@ -32,7 +32,7 @@ var (
 	)
 	privateKey, _         = os.ReadFile(privateKeyFilePath)
 	caCertPath, _         = filepath.Abs("../tls/ca.pem")
-	privateKeyFilePath, _ = filepath.Abs("../keys/id_rsa")
+	privateKeyFilePath, _ = filepath.Abs("../ssh/id_rsa")
 	currentUser, _        = user.Current()
 	kubeConfigPath        = fmt.Sprintf("%v/.kube/config", currentUser.HomeDir)
 )
