@@ -1,5 +1,5 @@
 TEMPLATE_PATH=bicep
-KEYS_PATH=keys
+KEYS_PATH=ssh
 
 compute/all: compute/resource-group compute/resources
 
