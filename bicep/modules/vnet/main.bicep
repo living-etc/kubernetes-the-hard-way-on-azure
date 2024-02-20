@@ -1,6 +1,7 @@
 param networkName string
 param vnetAddressPrefixes string
 param subnetAddressPrefixes string
+param podCidrPrefixes string
 param location string
 
 output subnetId string = virtualNetwork.properties.subnets[0].id
@@ -8,45 +9,66 @@ output id string = virtualNetwork.id
 
 var securityRules = [
   {
-    name: 'allow-all-tcp-from-internal-sources'
+    name: 'allow-all-tcp-from-internal-vm-network'
     protocol: 'tcp'
     port: '*'
     priority: 1000
     sourceAddressPrefix: subnetAddressPrefixes
   }
   {
-    name: 'allow-all-udp-from-internal-sources'
+    name: 'allow-all-udp-from-internal-vm-network'
     protocol: 'udp'
     port: '*'
     priority: 1100
     sourceAddressPrefix: subnetAddressPrefixes
   }
   {
-    name: 'allow-all-icmp-from-internal-sources'
+    name: 'allow-all-icmp-from-internal-vm-network'
     protocol: 'icmp'
     port: '*'
     priority: 1200
     sourceAddressPrefix: subnetAddressPrefixes
   }
   {
+    name: 'allow-all-tcp-from-internal-pod-networks'
+    protocol: 'tcp'
+    port: '*'
+    priority: 1300
+    sourceAddressPrefix: podCidrPrefixes
+  }
+  {
+    name: 'allow-all-udp-from-internal-pod-networks'
+    protocol: 'udp'
+    port: '*'
+    priority: 1400
+    sourceAddressPrefix: podCidrPrefixes
+  }
+  {
+    name: 'allow-all-icmp-from-internal-pod-networks'
+    protocol: 'icmp'
+    port: '*'
+    priority: 1500
+    sourceAddressPrefix: podCidrPrefixes
+  }
+  {
     name: 'allow-all-ssh-from-external-sources'
     protocol: 'tcp'
     port: 22
-    priority: 1300
+    priority: 1600
     sourceAddressPrefix: '0.0.0.0/0'
   }
   {
     name: 'allow-all-https-from-external-sources'
     protocol: 'tcp'
     port: 6443
-    priority: 1400
+    priority: 1700
     sourceAddressPrefix: '0.0.0.0/0'
   }
   {
     name: 'allow-all-icmp-from-external-sources'
-    protocol: 'tcp'
+    protocol: 'icmp'
     port: '*'
-    priority: 1500
+    priority: 1800
     sourceAddressPrefix: '0.0.0.0/0'
   }
 ]
