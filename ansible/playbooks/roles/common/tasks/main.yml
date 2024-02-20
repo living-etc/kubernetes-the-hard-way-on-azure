@@ -5,18 +5,15 @@
     use: systemd
   become: true
 
-- name: Copy ca.pem
-  ansible.builtin.copy:
-    src: ../../../../tls/ca.pem
-    dest: /home/ubuntu/ca.pem
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+- name: Get load balancer IP (1/2) - Retrieve IP address
+  ansible.builtin.command: "{{ role_path }}/files/get-public-ip.sh"
+  delegate_to: 127.0.0.1
+  register: public_ip_script_output
 
-- name: Copy admin kubeconfig
-  ansible.builtin.copy:
-    src: ../../../../../kubeconfig/admin.kubeconfig
-    dest: /home/ubuntu/admin.kubeconfig
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+- name: Get load balancer IP (2/2) - Set ip as fact
+  ansible.builtin.set_fact:
+    kubernetes_control_plane_node_load_balancer_ip: "{{ public_ip_script_output.stdout }}"
+
+- name: Debug load balancer ip
+  debug:
+    msg: "Load balancer ip: {{ kubernetes_control_plane_node_load_balancer_ip }}"

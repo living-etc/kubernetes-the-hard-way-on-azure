@@ -5,3 +5,4 @@ kubernetes_control_plane_node_private_ip:
 kubernetes_control_plane_node_etcd_servers:
 kubernetes_control_plane_node_public_ip:
 kubernetes_control_plane_node_admin_kubeconfig_path:
+kubernetes_control_plane_node_load_balancer_ip:

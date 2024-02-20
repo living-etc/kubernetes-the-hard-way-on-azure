@@ -4,3 +4,4 @@
 controller_hostname:
 controller_private_ip:
 controller_etcd_initial_cluster:
+kubernetes_control_plane_node_public_ip:

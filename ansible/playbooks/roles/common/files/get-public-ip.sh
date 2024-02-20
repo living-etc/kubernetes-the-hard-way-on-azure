@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-set -euo pipefail
+set -exuo pipefail
 
 RESOURCE_GROUP="Kubernetes-The-Hard-Way"
 
