@@ -1,14 +1,15 @@
 - name: Configure kubelet (1/5) - Create data directories
   ansible.builtin.file:
-    path: /var/lib/{{ item }}
+    path: "{{ item }}"
     state: directory
     mode: '0755'
     owner: root
     group: root
   become: true
   loop:
-    - kubelet
-    - kubernetes
+    - /var/lib/kubelet
+    - /var/lib/kubernetes
+    - /var/run/kubernetes
 
 - name: Configure kubelet (2/5) - Upload certificates and keys for worker
   ansible.builtin.copy:
