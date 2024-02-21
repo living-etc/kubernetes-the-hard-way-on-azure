@@ -1,6 +1,4 @@
 ---
-# defaults file for kubernetes-control-plane-node
-
 kubernetes_version:
 
 kubernetes_control_plane_node_private_ip:

@@ -14,32 +14,23 @@
 
 - name: Download and install CNI plugins (2/3) - Download CNI release archive
   ansible.builtin.get_url:
-    url: https://github.com/containernetworking/plugins/releases/download/v0.9.1/cni-plugins-linux-amd64-v0.9.1.tgz
+    url: https://github.com/containernetworking/plugins/releases/download/v{{ cni_version }}/cni-plugins-linux-amd64-v{{ cni_version }}.tgz
     dest: /tmp
     mode: '0644'
   become: true
 
 - name: Download and install CNI plugins (2/3) - Unpack binaries
   ansible.builtin.unarchive:
-    src: /tmp/cni-plugins-linux-amd64-v0.9.1.tgz
+    src: /tmp/cni-plugins-linux-amd64-v{{ cni_version }}.tgz
     dest: /opt/cni/bin/
     remote_src: yes
     mode: '0755'
   become: true
 
-- name: Configure CNI (1/2) - Configure bridge network
+- name: Configure CNI (1/1)
   ansible.builtin.template:
-    src: 10-bridge.conf.j2
-    dest: /etc/cni/net.d/10-bridge.conf
-    owner: root
-    group: root
-    mode: '0644'
-  become: true
-
-- name: Configure CNI (2/2) - Configure loopback network
-  ansible.builtin.copy:
-    src: 99-loopback.conf
-    dest: /etc/cni/net.d/99-loopback.conf
+    src: 10-containerd-net.conflist.j2
+    dest: /etc/cni/net.d/10-containerd-net.conflist
     owner: root
     group: root
     mode: '0644'

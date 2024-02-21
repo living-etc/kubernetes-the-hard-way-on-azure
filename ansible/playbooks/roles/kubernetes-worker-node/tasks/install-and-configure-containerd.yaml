@@ -1,6 +1,6 @@
 - name: Install containerd (1/4) - Download containerd release archive
   ansible.builtin.get_url:
-    url: https://github.com/containerd/containerd/releases/download/v1.4.4/containerd-1.4.4-linux-amd64.tar.gz 
+    url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz 
     dest: /tmp
     mode: '0644'
   become: true
@@ -16,7 +16,7 @@
 
 - name: Install containerd (3/4) - Unpack the containerd binaries
   ansible.builtin.unarchive:
-    src: /tmp/containerd-1.4.4-linux-amd64.tar.gz
+    src: /tmp/containerd-{{ containerd_version }}-linux-amd64.tar.gz
     dest: /tmp/containerd/
     remote_src: yes
     mode: '0755'

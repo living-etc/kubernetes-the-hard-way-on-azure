@@ -24,13 +24,13 @@
 
 - name: Download and unpack etcd
   ansible.builtin.unarchive:
-    src: https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-linux-amd64.tar.gz
+    src: https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz
     dest: /tmp/
     remote_src: yes
 
 - name: Copy etcd and etcdctl into place
   ansible.builtin.copy:
-    src: "/tmp/etcd-v3.5.12-linux-amd64/{{ item }}"
+    src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64/{{ item }}"
     dest: "/usr/local/bin/{{ item }}"
     owner: root
     group: root

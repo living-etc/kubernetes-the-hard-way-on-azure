@@ -13,7 +13,3 @@
 - name: Get load balancer IP (2/2) - Set ip as fact
   ansible.builtin.set_fact:
     kubernetes_control_plane_node_load_balancer_ip: "{{ public_ip_script_output.stdout }}"
-
-- name: Debug load balancer ip
-  debug:
-    msg: "Load balancer ip: {{ kubernetes_control_plane_node_load_balancer_ip }}"

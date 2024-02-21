@@ -1,5 +1,10 @@
 ---
 kubernetes_version:
+crictl_version:
+containerd_version:
+runc_version:
+cni_version:
+coredns_version:
 
 kubernetes_worker_node_pod_cidr:
 kubernetes_worker_node_cluster_cidr:
