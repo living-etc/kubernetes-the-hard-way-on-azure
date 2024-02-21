@@ -9,9 +9,9 @@ authentication:
     clientCAFile: "/var/lib/kubernetes/ca.pem"
 authorization:
   mode: Webhook
-clusterDomain: "cluster.local"
+clusterDomain: "{{ cluster_domain }}"
 clusterDNS:
-  - "10.32.0.10"
+  - "{{ cluster_dns }}"
 podCIDR: "{{ kubernetes_worker_node_pod_cidr }}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
