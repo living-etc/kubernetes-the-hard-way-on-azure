@@ -1,3 +1,2 @@
 ---
 # vars file for kubernetes-control-plane-node
-kubernetes_version: 1.21.0

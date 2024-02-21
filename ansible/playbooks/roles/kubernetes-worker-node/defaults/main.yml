@@ -1,3 +1,5 @@
 ---
+kubernetes_version:
+
 kubernetes_worker_node_pod_cidr:
 kubernetes_worker_node_cluster_cidr:
