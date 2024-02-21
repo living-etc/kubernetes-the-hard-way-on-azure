@@ -5,7 +5,7 @@
     mode: '0644'
   become: true
 
-- name: Install containerd (2/2) - Unpack the tarball
+- name: Install crictl (2/2) - Unpack the tarball
   ansible.builtin.unarchive:
     src: /tmp/crictl-v{{ crictl_version }}-linux-amd64.tar.gz
     dest: /usr/local/bin/
@@ -14,3 +14,4 @@
     owner: 'root'
     group: 'root'
   become: true
+  ignore_errors: true

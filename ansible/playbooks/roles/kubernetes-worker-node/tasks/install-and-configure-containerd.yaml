@@ -21,6 +21,7 @@
     remote_src: yes
     mode: '0755'
   become: true
+  ignore_errors: true
 
 - name: Install containerd (4/4) - Copy containerd binaries into place
   ansible.builtin.copy:
@@ -31,6 +32,7 @@
     mode: '0755'
     remote_src: yes
   become: true
+  ignore_errors: true
   loop:
     - { src: '/tmp/containerd/bin/containerd',              dest: '/bin/containerd' }
     - { src: '/tmp/containerd/bin/containerd-shim',         dest: '/bin/containerd-shim' }
