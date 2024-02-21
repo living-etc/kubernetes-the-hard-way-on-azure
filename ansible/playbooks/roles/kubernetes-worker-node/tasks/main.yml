@@ -25,4 +25,5 @@
 
 - name: Reboot the machine
   ansible.builtin.reboot:
+    connect_timeout: 30
   become: true
