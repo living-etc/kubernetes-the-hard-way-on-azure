@@ -106,7 +106,7 @@ module network './modules/vnet/main.bicep' = {
   params: {
     location: location
     networkName: projectNameAbbrv
-    vnetAddressPrefixes: '10.240.0.0/24'
+    vnetAddressPrefixes: '10.0.0.0/8'
     subnetAddressPrefixes: '10.240.0.0/24'
     podCidrPrefixes: '10.200.0.0/16'
   }
