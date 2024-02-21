@@ -13,6 +13,8 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   location: location
 
   properties: {
+    disableTcpStateTracking: false
+    enableIPForwarding: true
     ipConfigurations: [
       {
         name: 'primary'
@@ -34,7 +36,6 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
         }
       }
     ]
-    disableTcpStateTracking: false
   }
 }
 
