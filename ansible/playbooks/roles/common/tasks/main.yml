@@ -13,3 +13,21 @@
 - name: Get load balancer IP (2/2) - Set ip as fact
   ansible.builtin.set_fact:
     kubernetes_control_plane_node_load_balancer_ip: "{{ public_ip_script_output.stdout }}"
+
+- name: Mount cgroup filesystem (1/2) - Create systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cgroup-mount.service
+    src: cgroup-mount.service
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  become: true
+  notify:
+    - Systemd daemon_reload
+
+- name: Mount cgroup filesystem (2/2) - Enable and start systemd service
+  systemd:
+    name: cgroup-mount
+    enabled: yes
+    state: started
+  become: true

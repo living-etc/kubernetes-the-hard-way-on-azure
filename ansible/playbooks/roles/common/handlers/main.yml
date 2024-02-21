@@ -1,2 +1,6 @@
 ---
 # handlers file for common
+- name: Systemd daemon_reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
