@@ -10,3 +10,4 @@ coredns_version: 1.11.1
 cluster_cidr: "10.200.0.0/16"
 cluster_domain: cluster.local
 cluster_dns: "10.32.0.10"
+service_cluster_ip_range: "10.32.0.0/24"
