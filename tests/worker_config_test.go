@@ -15,7 +15,6 @@ func TestWorkerConfig(t *testing.T) {
 		binaries := []string{
 			"/usr/local/bin/kube-proxy",
 			"/usr/local/bin/kubelet",
-			"/usr/local/bin/kubectl",
 			"/usr/local/bin/runc",
 			"/usr/local/bin/crictl",
 			"/bin/containerd",
