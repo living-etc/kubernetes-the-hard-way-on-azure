@@ -3,6 +3,7 @@ param vnetAddressPrefixes string
 param subnetAddressPrefixes string
 param podCidrPrefixes string
 param location string
+param routeTableId string
 
 output subnetId string = virtualNetwork.properties.subnets[0].id
 output id string = virtualNetwork.id
@@ -109,6 +110,9 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
           addressPrefix: subnetAddressPrefixes
           networkSecurityGroup: {
             id: nsg.id
+          }
+          routeTable: {
+            id: routeTableId
           }
         }
       }
