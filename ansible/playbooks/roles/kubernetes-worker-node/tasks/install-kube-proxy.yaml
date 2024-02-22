@@ -1,4 +1,4 @@
-- name: Configure kube-proxy (1/3) - Create configuration directory
+- name: Install kube-proxy (1/6) - Create configuration directory
   ansible.builtin.file:
     path: /var/lib/kube-proxy
     state: directory
@@ -7,7 +7,7 @@
     mode: '0755'
   become: true
 
-- name: Configure kube-proxy (2/3) - Upload kube-proxy kubeconfig
+- name: Install kube-proxy (2/6) - Upload kubeconfig
   ansible.builtin.copy:
     src: ../../../../kubeconfig/kube-proxy.kubeconfig
     dest: /var/lib/kube-proxy/kubeconfig
@@ -16,7 +16,7 @@
     mode: '0644'
   become: true
 
-- name: Configure kube-proxy (3/3) - Upload kube-proxy config
+- name: Install kube-proxy (3/6) - Upload config
   ansible.builtin.template:
     src: kube-proxy-config.yaml.j2
     dest: /var/lib/kube-proxy/kube-proxy-config.yaml
@@ -25,14 +25,14 @@
     mode: '0644'
   become: true
 
-- name: Download kube-proxy binary (1/1) - Provides high level network features including load balancing and service discovery between pods
+- name: Install kube-proxy (4/6) - Download binary
   ansible.builtin.get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kube-proxy
     dest: /usr/local/bin/kube-proxy
     mode: '0755'
   become: true
 
-- name: Configure kube-proxy service (1/2) - Copy kube-proxy systemd unit file
+- name: Install kube-proxy (5/6) - Copy systemd unit file
   ansible.builtin.copy:
     src: kube-proxy.service
     dest: /etc/systemd/system/kube-proxy.service
@@ -41,7 +41,7 @@
     mode: '0644'
   become: true
 
-- name: Configure kube-proxy service (2/2) - Enable and start the kube-proxy service
+- name: Install kube-proxy (6/6) - Start the service
   ansible.builtin.systemd_service:
     state: started
     enabled: true

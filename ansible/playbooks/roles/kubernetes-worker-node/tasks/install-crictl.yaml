@@ -1,11 +1,11 @@
-- name: Install crictl (1/2) - Download tarball
+- name: Install crictl (1/2) - Download release archive
   ansible.builtin.get_url:
     url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz
     dest: /tmp
     mode: '0644'
   become: true
 
-- name: Install crictl (2/2) - Unpack the tarball
+- name: Install crictl (2/2) - Unpack binaries
   ansible.builtin.unarchive:
     src: /tmp/crictl-v{{ crictl_version }}-linux-amd64.tar.gz
     dest: /usr/local/bin/

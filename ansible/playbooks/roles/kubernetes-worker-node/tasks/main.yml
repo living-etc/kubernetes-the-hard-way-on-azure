@@ -1,27 +1,27 @@
 ---
-- name: Install and configure kubectl
-  ansible.builtin.include_tasks: install-and-configure-kubectl.yaml
+- name: Install dependencies
+  ansible.builtin.include_tasks: install-dependencies.yaml
 
 - name: Disable SWAP
   ansible.builtin.include_tasks: disable-swap.yaml
 
-- name: Install and configure CNI networking
-  ansible.builtin.include_tasks: install-and-configure-cni-networking.yaml
+- name: Install CNI plugins
+  ansible.builtin.include_tasks: install-cni-plugins.yaml
 
-- name: Install and configure containerd
-  ansible.builtin.include_tasks: install-and-configure-containerd.yaml
+- name: Install containerd
+  ansible.builtin.include_tasks: install-containerd.yaml
 
-- name: Install and configure kubelet
-  ansible.builtin.include_tasks: install-and-configure-kubelet.yaml
+- name: Install kubelet
+  ansible.builtin.include_tasks: install-kubelet.yaml
 
-- name: Install and configure kube-proxy
-  ansible.builtin.include_tasks: install-and-configure-kube-proxy.yaml
+- name: Install kube-proxy
+  ansible.builtin.include_tasks: install-kube-proxy.yaml
 
-- name: Install and configure runc
-  ansible.builtin.include_tasks: install-and-configure-runc.yaml
+- name: Install runc
+  ansible.builtin.include_tasks: install-runc.yaml
 
-- name: Install and configure crictl
-  ansible.builtin.include_tasks: install-and-configure-crictl.yaml
+- name: Install crictl
+  ansible.builtin.include_tasks: install-crictl.yaml
 
 - name: Reboot the machine
   ansible.builtin.reboot:

@@ -1,4 +1,4 @@
-- name: Configure kubelet (1/5) - Create data directories
+- name: Install kubelet (1/8) - Create data directories
   ansible.builtin.file:
     path: /var/lib/{{ item }}
     state: directory
@@ -10,7 +10,7 @@
     - kubelet
     - kubernetes
 
-- name: Configure kubelet (2/5) - Upload certificates and keys for worker
+- name: Install kubelet (2/8) - Upload certificates and keys
   ansible.builtin.copy:
     src: ../../../../tls/{{ item }}
     dest: /var/lib/kubelet/{{ item }}
@@ -22,7 +22,7 @@
     - "{{ inventory_hostname }}.pem"
     - "{{ inventory_hostname }}-key.pem"
 
-- name: Configure kubelet (3/5) - Upload kubeconfig
+- name: Install kubelet (3/8) - Upload kubeconfig
   ansible.builtin.copy:
     src: ../../../../kubeconfig/{{ inventory_hostname }}.kubeconfig
     dest: /var/lib/kubelet/kubeconfig
@@ -31,7 +31,7 @@
     mode: '0644'
   become: true
 
-- name: Configure kubelet (4/5) - Upload kubernete certificate
+- name: Install kubelet (4/8) - Upload certificate for kubernetes
   ansible.builtin.copy:
     src: ../../../../tls/ca.pem
     dest: /var/lib/kubernetes/ca.pem
@@ -40,7 +40,7 @@
     mode: '0644'
   become: true
 
-- name: Configure kubelet (5/5) - Upload kubelet config file
+- name: Install kubelet (5/8) - Upload config file
   ansible.builtin.template:
     src: kubelet-config.yaml.j2
     dest: /var/lib/kubelet/kubelet-config.yaml
@@ -49,14 +49,14 @@
     mode: '0644'
   become: true
 
-- name: Download kubelet binary (1/1) - Primary agent running on each node, registering the node with the API server and in charge of executing pod requirements from the API server
+- name: Install kubelet (6/8) - Download binary
   ansible.builtin.get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kubelet
     dest: /usr/local/bin/kubelet
     mode: '0755'
   become: true
 
-- name: Configure kubelet service (1/2) - Copy unit file into place
+- name: Install kubelet (7/8) - Copy systemd unit file
   ansible.builtin.copy:
     src: kubelet.service
     dest: /etc/systemd/system/kubelet.service
@@ -65,7 +65,7 @@
     mode: '0644'
   become: true
 
-- name: Configure kubelet service (2/2) - Enable and start the service
+- name: Install kubelet (8/8) - Start service
   ansible.builtin.systemd_service:
     state: started
     enabled: true
