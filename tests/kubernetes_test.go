@@ -65,7 +65,7 @@ func TestKubernetesConfig(t *testing.T) {
 	})
 
 	t.Run("kubernetes version info", func(t *testing.T) {
-		kubernetesVersionWant := "1.21"
+		kubernetesVersionWant := "1.29"
 		kubernetesVersionGot := kubernetesclient.Version().Full
 
 		if kubernetesVersionGot != kubernetesVersionWant {

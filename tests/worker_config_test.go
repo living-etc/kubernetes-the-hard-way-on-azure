@@ -64,7 +64,6 @@ func TestWorkerConfig(t *testing.T) {
 			"bridge",
 			"dhcp",
 			"firewall",
-			"flannel",
 			"host-device",
 			"host-local",
 			"ipvlan",
@@ -97,8 +96,7 @@ func TestWorkerConfig(t *testing.T) {
 		configFiles := []string{
 			"/etc/containerd/config.toml",
 			"/var/lib/kubelet/kubelet-config.yaml",
-			"/etc/cni/net.d/10-bridge.conf",
-			"/etc/cni/net.d/99-loopback.conf",
+			"/etc/cni/net.d/10-containerd-net.conflist",
 			"/var/lib/kube-proxy/kubeconfig",
 			"/var/lib/kubelet/kubeconfig",
 			"/var/lib/kubernetes/ca.pem",
