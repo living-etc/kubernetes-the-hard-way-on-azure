@@ -1,0 +1,43 @@
+---
+- name: Install kube-scheduler (1/5) - Download binary
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64/kube-scheduler
+    dest: /usr/local/bin/kube-scheduler
+    mode: '0755'
+  become: true
+
+- name: Install kube-scheduler (2/5) - Copy kubeconfig
+  ansible.builtin.copy:
+    src: ../../../../../kubeconfig/kube-scheduler.kubeconfig
+    dest: /var/lib/kubernetes/kube-scheduler.kubeconfig
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Install kube-scheduler (3/5) - Copy configurations
+  ansible.builtin.copy:
+    src: files/kube-scheduler.yaml
+    dest: /etc/kubernetes/config/kube-scheduler.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Install kube-scheduler (4/5) - Configure systemd unit
+  ansible.builtin.template:
+    src: templates/kube-scheduler.service.j2
+    dest: /etc/systemd/system/kube-scheduler.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - Systemd daemon_reload
+
+- name: Install kube-scheduler (5/5) - Enable and start service
+  ansible.builtin.systemd_service:
+    state: started
+    name: kube-scheduler
+    enabled: true
+  become: true

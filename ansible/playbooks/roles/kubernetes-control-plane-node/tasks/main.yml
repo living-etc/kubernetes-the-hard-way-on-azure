@@ -1,6 +1,42 @@
 ---
-- name: Configure the Kubernetes control plane
-  ansible.builtin.include_tasks: kubernetes-control-plane.yaml
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+  loop:
+    - /etc/kubernetes
+    - /etc/kubernetes/config
+    - /var/lib/kubernetes
+
+- name: Copy PKI keys and certificates
+  ansible.builtin.copy:
+    src: ../../../../../tls/{{ item }}
+    dest: /var/lib/kubernetes/{{ item }}
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  loop:
+    - ca.pem
+    - ca-key.pem
+    - kubernetes.pem
+    - kubernetes-key.pem
+    - service-account.pem
+    - service-account-key.pem
+    - encryption-config.yaml
+
+- name: Install kube-apiserver
+  ansible.builtin.include_tasks: install-and-configure-kube-apiserver.yaml
+
+- name: Install kube-controller-manager
+  ansible.builtin.include_tasks: install-and-configure-kube-controller-manager.yaml
+
+- name: Install kube-scheduler
+  ansible.builtin.include_tasks: install-and-configure-kube-scheduler.yaml
 
 - name: Configure load balancer health checks
   ansible.builtin.include_tasks: load-balancer-health-checks.yaml
