@@ -1,10 +1,10 @@
 kubernetes/all: kubernetes/apply
 
 kubernetes/plan:
-	cd terraform; aws-profile -p root ./init.sh; aws-profile -p root terraform plan
+	cd terraform; aws-profile -p management ./init.sh; aws-profile -p root terraform plan
 
 kubernetes/apply:
-	cd terraform; aws-profile -p root terraform apply -auto-approve
+	cd terraform; aws-profile -p management terraform apply -auto-approve
 
 kubernetes/test:
 	cd tests; go test -run '(TestKubernetesConfig)'
