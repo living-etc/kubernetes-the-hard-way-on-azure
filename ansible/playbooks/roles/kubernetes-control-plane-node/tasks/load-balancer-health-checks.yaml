@@ -1,12 +1,18 @@
 ---
-- name: Install nginx
+- name: Configure load balancer health checks (1/4) - Install nginx
   ansible.builtin.apt:
     name: nginx
     state: present
     update_cache: yes
   become: true
 
-- name: Copy nginx config
+- name: Configure load balancer health checks (2/4) - Remove default configuration
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: true
+
+- name: Configure load balancer health checks (3/4) - Copy nginx config
   ansible.builtin.copy:
     src: kubernetes.default.svc.cluster.local
     dest: /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
@@ -14,8 +20,10 @@
     group: root
     mode: '0644'
   become: true
+  notify:
+    - Restart nginx
 
-- name: Enable nginx config
+- name: Configure load balancer health checks (4/4) - Enable nginx config
   ansible.builtin.file:
     src: /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
     dest: /etc/nginx/sites-enabled/kubernetes.default.svc.cluster.local
