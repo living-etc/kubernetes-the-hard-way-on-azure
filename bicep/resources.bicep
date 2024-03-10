@@ -8,6 +8,8 @@ var lbName = 'k8sControllersLB'
 var lbFrontEndName = projectNameAbbrv
 var lbBackendPoolName = 'k8sControllersPool'
 var lbProbeName = projectNameAbbrv
+var workers = [ 'worker-1', 'worker-2', 'worker-3' ]
+var controllers = [ 'controller-1', 'controller-2', 'controller-3' ]
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: projectNameAbbrv
@@ -113,10 +115,10 @@ module network './modules/vnet/main.bicep' = {
   }
 }
 
-module controller './modules/vm/main.bicep' = [for index in range(1, 3): {
-  name: '${deployment().name}-controller-${index}'
+module controller './modules/vm/main.bicep' = [for (controller, index) in controllers: {
+  name: '${deployment().name}-${controller}'
   params: {
-    instanceName: 'controller-${index}'
+    instanceName: controller
     publicKey: ansible.properties.publicKey
     location: location
     privateIp: '10.240.0.1${index}'
@@ -130,10 +132,10 @@ module controller './modules/vm/main.bicep' = [for index in range(1, 3): {
   }
 }]
 
-module worker './modules/vm/main.bicep' = [for index in range(1, 3): {
-  name: '${deployment().name}-worker-${index}'
+module worker './modules/vm/main.bicep' = [for (worker, index) in workers: {
+  name: '${deployment().name}-${worker}'
   params: {
-    instanceName: 'worker-${index}'
+    instanceName: worker
     publicKey: ansible.properties.publicKey
     location: location
     privateIp: '10.240.0.2${index}'
@@ -151,13 +153,13 @@ resource routeTable 'Microsoft.Network/routeTables@2023-04-01' = {
   location: location
 }
 
-resource route 'Microsoft.Network/routeTables/routes@2023-04-01' = [for i in range(1,3): {
-  name: 'worker-${i}'
+resource route 'Microsoft.Network/routeTables/routes@2023-04-01' = [for (worker, index) in workers: {
+  name: worker
   parent: routeTable
   properties: {
-    addressPrefix: '10.200.${i}.0/24'
+    addressPrefix: '10.200.${index}.0/24'
     hasBgpOverride: false
-    nextHopIpAddress: '10.240.0.2${i}'
+    nextHopIpAddress: '10.240.0.2${index}'
     nextHopType: 'VirtualAppliance'
   }
 }]
