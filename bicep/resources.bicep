@@ -139,7 +139,6 @@ module worker './modules/vm/main.bicep' = [for (worker, index) in workers: {
     publicKey: ansible.properties.publicKey
     location: location
     privateIp: '10.240.0.2${index}'
-    customData: '{"pod-cidr":"10.200.${index}.0/24"}'
     subnet: network.outputs.subnetId
     tags: {
       Porject: 'kubernetes-the-hard-way'

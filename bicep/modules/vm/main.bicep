@@ -3,7 +3,6 @@ param location string
 param privateIp string
 param instanceName string
 param tags object
-param customData string = '{}'
 param subnet string
 param loadBalancerBackendPool string = ''
 param loadBalancer string = ''
@@ -90,7 +89,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       computerName: 'Node'
       adminUsername: 'ubuntu'
       adminPassword: 'ubuntu'
-      customData: base64(customData)
 
       linuxConfiguration: {
         disablePasswordAuthentication: true
